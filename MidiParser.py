@@ -9,10 +9,15 @@
 class MidiParser:
     def __init__(self, midiFilename):
         self.midiFile = open(midiFilename, "rb")
+        self.nextByte = self.midiFile.read(1)
         return
-    def __hasMoreData(self):
-        return True
-    def __readNextData(self):
-        return
+    def hasMoreData(self):
+        return self.nextByte != b''
+    def readNextData(self):
+        if self.nextByte == b'':
+            return self.nextByte
+        returnVal = self.nextByte
+        self.nextByte = self.midiFile.read(1)
+        return returnVal
     def close(self):
         self.midiFile.close()
