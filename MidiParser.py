@@ -5,3 +5,14 @@
     #Midi Channel events, including delta time
     #Meta Event
     #System Exclusive Event
+
+class MidiParser:
+    def __init__(self, midiFilename):
+        self.midiFile = open(midiFilename, "rb")
+        return
+    def __hasMoreData(self):
+        return True
+    def __readNextData(self):
+        return
+    def close(self):
+        self.midiFile.close()
