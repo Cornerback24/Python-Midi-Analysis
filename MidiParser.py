@@ -19,7 +19,7 @@ class MidiParser:
         if self.nextByte == b'':
             print("Tried to read end of file!")
             return self.nextByte
-        if self.state == "chunkStart":
+        if self.state == "chunkStart": #return ID along with chunk size
             returnVal = self.readNextBytes(8)
             if returnVal[0:4] == b'MThd':
                 self.state = "inHeader"
@@ -27,21 +27,44 @@ class MidiParser:
                 self.state = "inTrack"
             self.bytesLeftInChunk = int.from_bytes(returnVal[4:8], "big")
             return returnVal
-        if self.state == "inHeader":
+        if self.state == "inHeader": #return body of header
             return self.readNextBytes(self.bytesLeftInChunk)
-        if self.state == "inTrack":
+        if self.state == "inTrack": #return an event
             return self.readEvent()
-        return self.readNextByte()
+        print("Internal State Error!")
 
     def readEvent(self):
-        return "event"
+        deltaTime = self.readVariableLength()
+        firstByte = self.readNextByte()
+        if firstByte == b'\xff':
+            return deltaTime + self.readMetaEvent(firstByte)
+        elif firstByte ==  b'f0' or firstByte == b'f7':
+            return deltaTime + self.readSysExEvent(firstByte)
+        else:
+            return deltaTime + self.readChannelEvent(firstByte)
+    def readChannelEvent(self, firstByte):
+        dataLength = 1
+        if msbIsOne(firstByte): #not running status
+            num = dataLength = 2
+        return b'CHNL' + firstByte + self.readNextBytes(dataLength)
+    def readMetaEvent(self, firstByte):
+        metaEventType = self.readNextByte()
+        metaEventLength = self.readVariableLength()
+        metaEventData = self.readNextBytes(int.from_bytes(v(metaEventLength),
+                                                          "big"))
+        return b'META ' + metaEventType + metaEventLength + metaEventData
+    def readSysExEvent(self, firstByte):
+        return b'SysEx MAKE IT OBIVIOSU IN DA TEST THAT THIS IS A SYS EX'
     
     def readNextByte(self):
-        if self.bytesLeftInChunk > 0:
+        if self.bytesLeftInChunk > -500:
             self.bytesLeftInChunk = self.bytesLeftInChunk - 1
         if self.bytesLeftInChunk == 0:
             self.state = "chunkStart"
         returnVal = self.nextByte
+        if returnVal == b'':
+            print("PAST EOF")
+        print(" " + hex((int.from_bytes(returnVal, "big"))))
         self.nextByte = self.midiFile.read(1)
         return returnVal
     def readNextBytes(self, numBytes):
@@ -49,6 +72,31 @@ class MidiParser:
         for i in range(numBytes):
             returnBytes = returnBytes + self.readNextByte()
         return returnBytes
+
+    
+    def readVariableLength(self):
+        temp = 1
+        curByte = self.readNextByte()
+        first = curByte
+        returnVal = curByte
+        while(msbIsOne(curByte)):
+            temp = temp + 1
+            curByte = self.readNextByte()
+            returnVal = returnVal + curByte
+        return returnVal
     def close(self):
         self.midiFile.close()
-        
+
+def msbIsOne(byte): #returns true of the msb of a single byte is 1
+    return (byte[0] & int('80',16)) > 0
+def v(stuff): #TODO, rename this methond and make it acutally calculate
+              #variable length value
+    a = bytes()
+    
+    for i in range(len(stuff)):
+        #print(stuff)
+        #print(stuff[i])
+        #print(bytes((stuff[i] & int('7f', 16),)))
+        #print(bytes((stuff[i] & int('7f', 16),)))
+        a += bytes((stuff[i] & int('7f', 16),))
+    return a
