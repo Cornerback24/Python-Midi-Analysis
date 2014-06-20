@@ -38,7 +38,7 @@ class MidiParser:
         firstByte = self.readNextByte()
         if firstByte == b'\xff':
             return deltaTime + self.readMetaEvent(firstByte)
-        elif firstByte ==  b'f0' or firstByte == b'f7':
+        elif firstByte ==  b'\xf0' or firstByte == b'\xf7':
             return deltaTime + self.readSysExEvent(firstByte)
         else:
             return deltaTime + self.readChannelEvent(firstByte)
@@ -50,11 +50,15 @@ class MidiParser:
     def readMetaEvent(self, firstByte):
         metaEventType = self.readNextByte()
         metaEventLength = self.readVariableLength()
-        metaEventData = self.readNextBytes(int.from_bytes(v(metaEventLength),
-                                                          "big"))
-        return b'META ' + metaEventType + metaEventLength + metaEventData
+        metaEventData = self.readNextBytes(int.from_bytes(calcVarLengthVal(
+            metaEventLength),"big"))
+        return (b'META ' + firstByte + metaEventType +
+                metaEventLength + metaEventData)
     def readSysExEvent(self, firstByte):
-        return b'SysEx MAKE IT OBIVIOSU IN DA TEST THAT THIS IS A SYS EX'
+        #TODO write this method
+        dataLength = self.readVariableLength()
+        return (b'SYEX' + firstByte + dataLength +
+                self.readNextBytes(calcVarLengthVal(dataLength)))
     
     def readNextByte(self):
         if self.bytesLeftInChunk > -500:
@@ -64,11 +68,11 @@ class MidiParser:
         returnVal = self.nextByte
         if returnVal == b'':
             print("PAST EOF")
-        print(" " + hex((int.from_bytes(returnVal, "big"))))
+        #print(" " + hex((int.from_bytes(returnVal, "big"))))
         self.nextByte = self.midiFile.read(1)
         return returnVal
     def readNextBytes(self, numBytes):
-        returnBytes = b''   
+        returnBytes = b''
         for i in range(numBytes):
             returnBytes = returnBytes + self.readNextByte()
         return returnBytes
@@ -89,14 +93,10 @@ class MidiParser:
 
 def msbIsOne(byte): #returns true of the msb of a single byte is 1
     return (byte[0] & int('80',16)) > 0
-def v(stuff): #TODO, rename this methond and make it acutally calculate
+def calcVarLengthVal(varLengthData): #TODO, make this method acutally calculate
               #variable length value
-    a = bytes()
+    temp = bytes()
     
-    for i in range(len(stuff)):
-        #print(stuff)
-        #print(stuff[i])
-        #print(bytes((stuff[i] & int('7f', 16),)))
-        #print(bytes((stuff[i] & int('7f', 16),)))
-        a += bytes((stuff[i] & int('7f', 16),))
-    return a
+    for i in range(len(varLengthData)):
+        temp += bytes((varLengthData[i] & int('7f', 16),))
+    return temp
