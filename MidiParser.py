@@ -61,12 +61,12 @@ class MidiParser:
                 self.readNextBytes(calcVarLengthVal(dataLength)))
     
     def readNextByte(self):
-        if self.bytesLeftInChunk > -500:
+        if self.bytesLeftInChunk > -500: #TODO change value
             self.bytesLeftInChunk = self.bytesLeftInChunk - 1
         if self.bytesLeftInChunk == 0:
             self.state = "chunkStart"
         returnVal = self.nextByte
-        if returnVal == b'':
+        if returnVal == b'': #TODO remove print statment
             print("PAST EOF")
         #print(" " + hex((int.from_bytes(returnVal, "big"))))
         self.nextByte = self.midiFile.read(1)
