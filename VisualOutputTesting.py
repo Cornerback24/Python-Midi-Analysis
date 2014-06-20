@@ -32,3 +32,4 @@ for i in range(65):
     print(str(midiParser.readNextData()) + " size left: " +
         str(midiParser.bytesLeftInChunk))
 '''
+midiParser.close()

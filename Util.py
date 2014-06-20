@@ -6,3 +6,9 @@ class Util:
         if (len(returnVal) % 2) != 0:
             returnVal = '0' + returnVal
         return returnVal
+
+    #returns a bytes objected shifted left by numBits bits
+    @staticmethod
+    def lshiftBytes(sourceBytes, numBits):
+        return bytes.fromhex(Util.paddedHex(
+            int.from_bytes(sourceBytes, "big") << numBits))
