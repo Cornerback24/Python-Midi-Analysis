@@ -1,5 +1,5 @@
 from MidiParser import MidiParser
-
+from Util import Util
 
 midiParser = MidiParser("testMidiFile.mid")
 
@@ -32,5 +32,3 @@ for i in range(65):
     print(str(midiParser.readNextData()) + " size left: " +
         str(midiParser.bytesLeftInChunk))
 '''
-
-midiParser.close()
