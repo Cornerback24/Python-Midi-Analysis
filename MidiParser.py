@@ -5,6 +5,7 @@
     #Midi Channel events, including delta time
     #Meta Event
     #System Exclusive Event
+from Util import Util
 
 class MidiParser:
     def __init__(self, midiFilename):
@@ -50,15 +51,15 @@ class MidiParser:
     def readMetaEvent(self, firstByte):
         metaEventType = self.readNextByte()
         metaEventLength = self.readVariableLength()
-        metaEventData = self.readNextBytes(int.from_bytes(calcVarLengthVal(
-            metaEventLength),"big"))
+        metaEventData = self.readNextBytes(Util.varLenVal(
+            metaEventLength))
         return (b'META ' + firstByte + metaEventType +
                 metaEventLength + metaEventData)
     def readSysExEvent(self, firstByte):
         #TODO write this method
         dataLength = self.readVariableLength()
         return (b'SYEX' + firstByte + dataLength +
-                self.readNextBytes(calcVarLengthVal(dataLength)))
+                self.readNextBytes(Util.varLenVal(dataLength)))
     
     def readNextByte(self):
         if self.bytesLeftInChunk > -500: #TODO change value
@@ -79,12 +80,10 @@ class MidiParser:
 
     
     def readVariableLength(self):
-        temp = 1
         curByte = self.readNextByte()
         first = curByte
         returnVal = curByte
         while(msbIsOne(curByte)):
-            temp = temp + 1
             curByte = self.readNextByte()
             returnVal = returnVal + curByte
         return returnVal
@@ -93,10 +92,3 @@ class MidiParser:
 
 def msbIsOne(byte): #returns true of the msb of a single byte is 1
     return (byte[0] & int('80',16)) > 0
-def calcVarLengthVal(varLengthData): #TODO, make this method acutally calculate
-              #variable length value
-    temp = bytes()
-    
-    for i in range(len(varLengthData)):
-        temp += bytes((varLengthData[i] & int('7f', 16),))
-    return temp
