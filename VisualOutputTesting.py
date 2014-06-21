@@ -33,3 +33,6 @@ for i in range(65):
         str(midiParser.bytesLeftInChunk))
 '''
 midiParser.close()
+b = b'\x81\x7f'
+b = bytearray(b)
+print(Util.varLenVal(b))
