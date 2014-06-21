@@ -19,8 +19,8 @@ class Util:
         return bytearray.fromhex(Util.paddedHex(
             int.from_bytes(sourceByteArray, "big") << numBits))
 
-    #tacks a byte object formatted in variable length and
-    #return the int value represented
+    #takes a bytes object formatted in variable length and
+    #returns the int value represented
     @staticmethod
     def varLenVal(varLenBytes):
         if len(varLenBytes) == 0:
