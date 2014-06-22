@@ -1,4 +1,4 @@
-#returns elements of a midi file (in raw form)
+#returns elements of a midi file (in raw form as a bytes object)
 #elements returned:
     #Chuck ID along with chunk size
     #The rest of the header chunk
