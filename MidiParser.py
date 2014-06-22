@@ -47,18 +47,18 @@ class MidiParser:
         dataLength = 1
         if msbIsOne(firstByte): #not running status
             num = dataLength = 2
-        return b'CHNL' + firstByte + self.readNextBytes(dataLength)
+        return firstByte + self.readNextBytes(dataLength)
     def readMetaEvent(self, firstByte):
         metaEventType = self.readNextByte()
         metaEventLength = self.readVariableLength()
         metaEventData = self.readNextBytes(Util.varLenVal(
             metaEventLength))
-        return (b'META ' + firstByte + metaEventType +
+        return (firstByte + metaEventType +
                 metaEventLength + metaEventData)
     def readSysExEvent(self, firstByte):
         #TODO write this method
         dataLength = self.readVariableLength()
-        return (b'SYEX' + firstByte + dataLength +
+        return (firstByte + dataLength +
                 self.readNextBytes(Util.varLenVal(dataLength)))
     
     def readNextByte(self):
