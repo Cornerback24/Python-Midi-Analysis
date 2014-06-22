@@ -1,4 +1,5 @@
 from MidiParser import MidiParser
+from MidiData import MidiData
 from Util import Util
 
 midiParser = MidiParser("testMidiFile.mid")
@@ -36,3 +37,5 @@ midiParser.close()
 b = b'\x81\x7f'
 b = bytearray(b)
 print(Util.varLenVal(b))
+
+midiData = MidiData("testMidiFile.mid")
