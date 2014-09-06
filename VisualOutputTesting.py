@@ -1,6 +1,9 @@
 from MidiParser import MidiParser
 from MidiData import MidiData
 from Util import Util
+from MidiEventDecoder import MidiEventDecoder
+from MidiEventDecoder import MidiEvent
+from MidiEventDecoder import HeaderData
 
 midiParser = MidiParser("testMidiFile.mid")
 
@@ -38,4 +41,11 @@ b = b'\x81\x7f'
 b = bytearray(b)
 print(Util.varLenVal(b))
 
+
 midiData = MidiData("testMidiFile.mid")
+
+print()
+#testing MidiEventDecoder
+eventDecoder = MidiEventDecoder("testMidiFile.mid")
+print(eventDecoder.headerData())
+eventDecoder.close()
