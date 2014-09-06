@@ -1,4 +1,5 @@
 from MidiParser import MidiParser
+from Util import Util
 
 #decodes data from the MidiParser into data easier to work with in MidiData
 #(will decode each piece of data from midiParser into an event,
@@ -11,11 +12,13 @@ class MidiEventDecoder:
         return self.midiParser.hasMoreData
     #be sure to call this once before calling nextEvent
     def headerData(self):
-        return HeaderData(self, self.midiParser.readNextData(),
+        return HeaderData(self.midiParser.readNextData(),
                           self.midiParser.readNextData())
     #returns a MidiEvent
     def nextEvent(self):
         return MidiEvent(self.midiParser.readNextData())
+    def close(self):
+        self.midiParser.close()
 
 #contains all data about and event
 #values not used will be set to None
@@ -43,7 +46,18 @@ class HeaderData:
     def __init__(self, headerChunkID, headerData):
         self.ticksPerBeat = None
         self.framesPerSecond = None
-        self.formatType = headerData
+        self.ticksPerFrame = None
+        self.formatType = int.from_bytes(headerData[0:2], "big")
+        self.numTracks = int.from_bytes(headerData[2:4], "big")
+        timeDivision = headerData[4:6]
+        if Util.msbIsOne(headerData): #frames per second
+            print("TODO")
+        else: #ticks per beat
+            self.ticksPerBeat = int.from_bytes(timeDivision, "big")
         return
     def __str__(self):
-        return "Format type: " + str(self.formatType)
+        s = ("Format type: " + str(self.formatType)
+                + " Number of tracks: " + str(self.numTracks))
+        if self.ticksPerBeat != None:
+            s = s + "\nTicks per Beat: " + str(self.ticksPerBeat)
+        return s
