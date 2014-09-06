@@ -47,7 +47,7 @@ class MidiParser:
             return deltaTime + self.readChannelEvent(firstByte)
     def readChannelEvent(self, firstByte):
         dataLength = 1
-        if msbIsOne(firstByte): #not running status
+        if Util.msbIsOne(firstByte): #not running status
             num = dataLength = 2
         return firstByte + self.readNextBytes(dataLength)
     def readMetaEvent(self, firstByte):
@@ -85,12 +85,9 @@ class MidiParser:
         curByte = self.readNextByte()
         first = curByte
         returnVal = curByte
-        while(msbIsOne(curByte)):
+        while(Util.msbIsOne(curByte)):
             curByte = self.readNextByte()
             returnVal = returnVal + curByte
         return returnVal
     def close(self):
         self.midiFile.close()
-
-def msbIsOne(byte): #returns true if the msb of a single byte is 1
-    return (byte[0] & int('80',16)) > 0
