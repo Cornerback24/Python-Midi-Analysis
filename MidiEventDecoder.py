@@ -51,7 +51,8 @@ class HeaderData:
         self.numTracks = int.from_bytes(headerData[2:4], "big")
         timeDivision = headerData[4:6]
         if Util.msbIsOne(headerData): #frames per second
-            print("TODO")
+            self.framesPerSecond = timeDivision[0] & int('7f', 16)
+            self.tickesPerFrame = int.from_bytes(timeDivision[1:2], "big")
         else: #ticks per beat
             self.ticksPerBeat = int.from_bytes(timeDivision, "big")
         return
