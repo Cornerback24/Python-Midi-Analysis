@@ -43,4 +43,7 @@ class HeaderData:
     def __init__(self, headerChunkID, headerData):
         self.ticksPerBeat = None
         self.framesPerSecond = None
+        self.formatType = headerData
         return
+    def __str__(self):
+        return "Format type: " + str(self.formatType)
