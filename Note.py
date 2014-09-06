@@ -7,6 +7,7 @@ class Note:
         self.endTime = 0
         return
     #returns a vaule used in sorting the notes
+    #notes are sorted by time, bank, channel, pitch
     def sortVal(self):
         return ((self.time + 1)*1000 + self.bank*20 + self.chan
                 + self.pitch*.001)

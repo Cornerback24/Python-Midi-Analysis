@@ -32,5 +32,4 @@ class Util:
             nextByte = varLenArray[i+1] & b'\x7f'[0]
             returnValBytes = Util.lshiftByteArray(returnValBytes, 7)
             returnValBytes[0] = returnValBytes[0] | nextByte
-        print(returnValBytes)
         return int.from_bytes(returnValBytes, "big")

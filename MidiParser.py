@@ -1,4 +1,4 @@
-#returns elements of a midi file (in raw form as a bytes object)
+ #returns elements of a midi file (in raw form as a bytes object)
 #elements returned:
     #Chuck ID along with chunk size
     #The rest of the header chunk
@@ -16,6 +16,8 @@ class MidiParser:
         return
     def hasMoreData(self):
         return self.nextByte != b''
+    def chunkHasMoreData(self):
+        return self.bytesLeftInChunk > 0
     def readNextData(self):
         if self.nextByte == b'':
             print("Tried to read end of file!")
@@ -90,5 +92,5 @@ class MidiParser:
     def close(self):
         self.midiFile.close()
 
-def msbIsOne(byte): #returns true of the msb of a single byte is 1
+def msbIsOne(byte): #returns true if the msb of a single byte is 1
     return (byte[0] & int('80',16)) > 0
