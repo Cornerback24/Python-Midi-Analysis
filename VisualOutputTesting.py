@@ -41,10 +41,10 @@ b = b'\x81\x7f'
 b = bytearray(b)
 print(Util.varLenVal(b))
 
-
+print("------------")
 midiData = MidiData("testMidiFile.mid")
 
-print()
+print("--------------")
 #testing MidiEventDecoder
 eventDecoder = MidiEventDecoder("testMidiFile.mid")
 print(eventDecoder.headerData())
