@@ -1,5 +1,6 @@
 from MidiParser import MidiParser
 
+#contains the finalized data after anylisis
 class MidiData:
     def __init__(self, midiFilename):
         #variables

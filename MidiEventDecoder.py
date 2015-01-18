@@ -31,7 +31,7 @@ class MidiEvent:
     #   Channel Aftertouch, Pitch Bend
     #   meta
     #   sysEx
-    def __init__(midiData):
+    def __init__(self, midiData):
         #midi event data
         self.noteNumber = None
         self.velocity = None
@@ -40,6 +40,8 @@ class MidiEvent:
         self.aftertouchValue= None
         self.pitchValue = None
         return
+    def __stf__(self):
+        return "MidiEvent"
 
 #contains data from the header chunk
 class HeaderData:
