@@ -48,4 +48,6 @@ print("--------------")
 #testing MidiEventDecoder
 eventDecoder = MidiEventDecoder("testMidiFile.mid")
 print(eventDecoder.headerData())
+while eventDecoder.hasMoreEvents():
+    print(eventDecoder.nextEvent())
 eventDecoder.close()

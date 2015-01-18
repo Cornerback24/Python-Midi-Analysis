@@ -9,7 +9,7 @@ class MidiEventDecoder:
         self.midiParser = MidiParser(midiFilename)
         return
     def hasMoreEvents(self):
-        return self.midiParser.hasMoreData
+        return self.midiParser.hasMoreData()
     #be sure to call this once before calling nextEvent
     def headerData(self):
         return HeaderData(self.midiParser.readNextData(),
@@ -40,7 +40,7 @@ class MidiEvent:
         self.aftertouchValue= None
         self.pitchValue = None
         return
-    def __stf__(self):
+    def __str__(self):
         return "MidiEvent"
 
 #contains data from the header chunk
