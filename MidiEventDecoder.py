@@ -16,7 +16,20 @@ class MidiEventDecoder:
                           self.midiParser.readNextData())
     #returns a MidiEvent
     def nextEvent(self):
-        return MidiEvent(self.midiParser.readNextData())
+        return self.midiEvent(self.midiParser.readNextData())
+    def midiEvent(self, midiData):
+        #check if TrackHeader
+        if midiData[0:4] == b'MTrk':
+            return TrackHeader(midiData)#MidiEvent(b'\x00', midiData)
+        #find deltaTime
+        tempData = midiData
+        temp = 0
+        while Util.msbIsOne(tempData[temp:]):
+            temp = temp+1
+        temp = temp + 1
+        deltaTime = tempData[:temp]
+        tempData = tempData[temp:]        
+        return MidiEvent(deltaTime, tempData)
     def close(self):
         self.midiParser.close()
 
@@ -31,12 +44,12 @@ class MidiEvent:
     #   Channel Aftertouch, Pitch Bend
     #   meta
     #   sysEx
-    def __init__(self, midiData):
+    def __init__(self, deltaTime, midiData):
         #midi event data
         self.midiData = midiData
         self.eventClass = "Channel" #Channel, Meta, System, #TrackHeader
         self.eventType = None
-        self.deltaTime = None
+        self.deltaTime = Util.varLenVal(deltaTime)
         self.noteNumber = None
         self.velocity = None
         self.controllerNumber = None
@@ -47,21 +60,12 @@ class MidiEvent:
         if midiData[0:4] == b'MTrk':
             self.eventClass = "TrackHeader"
             return
-        #delta time
-        tempData = midiData
-        temp = 0
-        while Util.msbIsOne(tempData[temp:]):
-            temp = temp+1
-        temp = temp + 1
-        deltaTime = tempData[:temp]
-        tempData = tempData[temp:]
-        self.deltaTime = Util.varLenVal(deltaTime)
         #check if 
         #event class/type
-        if Util.msbIsOne(tempData): #otherwise running status
-            if tempData[0:1] == b'\xff':
+        if Util.msbIsOne(midiData): #otherwise running status
+            if midiData[0:1] == b'\xff':
                 self.eventClass = "Meta"
-            if tempData[0:1] == b'\xf0' or tempData[0:1] == b'\xf7':
+            if midiData[0:1] == b'\xf0' or midiData[0:1] == b'\xf7':
                 self.eventClass = "System"
         
         return
@@ -91,3 +95,9 @@ class HeaderData:
         if self.ticksPerBeat != None:
             s = s + "\nTicks per Beat: " + str(self.ticksPerBeat)
         return s
+    
+class TrackHeader(MidiEvent):
+    def __init__(self, midiData):
+        self.midiData = midiData
+    def __str__(self):
+        return "Track Header " + str(self.midiData)
