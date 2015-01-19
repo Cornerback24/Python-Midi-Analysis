@@ -34,6 +34,8 @@ class MidiEvent:
     def __init__(self, midiData):
         #midi event data
         self.midiData = midiData
+        self.eventClass = "Channel" #Channel, Meta, System, #TrackHeader
+        self.eventType = None
         self.deltaTime = None
         self.noteNumber = None
         self.velocity = None
@@ -42,17 +44,30 @@ class MidiEvent:
         self.aftertouchValue= None
         self.pitchValue = None
         #analyze data
+        if midiData[0:4] == b'MTrk':
+            self.eventClass = "TrackHeader"
+            return
+        #delta time
         tempData = midiData
         temp = 0
         while Util.msbIsOne(tempData[temp:]):
             temp = temp+1
+        temp = temp + 1
         deltaTime = tempData[:temp]
         tempData = tempData[temp:]
         self.deltaTime = Util.varLenVal(deltaTime)
+        #check if 
+        #event class/type
+        if Util.msbIsOne(tempData): #otherwise running status
+            if tempData[0:1] == b'\xff':
+                self.eventClass = "Meta"
+            if tempData[0:1] == b'\xf0' or tempData[0:1] == b'\xf7':
+                self.eventClass = "System"
         
         return
+    
     def __str__(self):
-        return ("MidiEvent " + str(self.midiData) +
+        return (self.eventClass + " " + str(self.midiData) +
                 " deltaTime: " + str(self.deltaTime))
 
 #contains data from the header chunk
