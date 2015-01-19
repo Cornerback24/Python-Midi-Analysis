@@ -28,7 +28,9 @@ class MidiEventDecoder:
             temp = temp+1
         temp = temp + 1
         deltaTime = tempData[:temp]
-        tempData = tempData[temp:]        
+        tempData = tempData[temp:]
+        if tempData[0:1] == b'\xff':
+                return MetaEvent(deltaTime, tempData)
         return MidiEvent(deltaTime, tempData)
     def close(self):
         self.midiParser.close()
@@ -99,5 +101,14 @@ class HeaderData:
 class TrackHeader(MidiEvent):
     def __init__(self, midiData):
         self.midiData = midiData
+        self.eventClass = "TrackHeader"
     def __str__(self):
         return "Track Header " + str(self.midiData)
+
+class MetaEvent(MidiEvent):
+    def __init__(self, deltaTime, midiData):
+        self.midiData = midiData
+        self.deltaTime = Util.varLenVal(deltaTime)
+    def __str__(self):
+        return ("Meta " + str(self.midiData) + " deltaTime: "
+                + str(self.deltaTime))
