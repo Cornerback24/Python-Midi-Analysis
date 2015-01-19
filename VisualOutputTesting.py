@@ -48,6 +48,10 @@ print("--------------")
 #testing MidiEventDecoder
 eventDecoder = MidiEventDecoder("testMidiFile.mid")
 print(eventDecoder.headerData())
+eventData = eventDecoder.nextEvent().midiData
+#print(int.from_bytes(eventData[0:1],"big"))
+#print(Util.msbIsOne(eventData))
+#print(type(eventData))
 while eventDecoder.hasMoreEvents():
     print(eventDecoder.nextEvent())
 eventDecoder.close()

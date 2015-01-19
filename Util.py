@@ -34,5 +34,5 @@ class Util:
             returnValBytes[0] = returnValBytes[0] | nextByte
         return int.from_bytes(returnValBytes, "big")
 
-    def msbIsOne(byte): #returns true if the msb of a single byte is 1
+    def msbIsOne(byte): #returns true if the msb of a bytes object is 1
         return (byte[0] & int('80',16)) > 0

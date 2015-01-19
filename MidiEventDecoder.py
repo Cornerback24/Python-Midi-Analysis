@@ -33,15 +33,27 @@ class MidiEvent:
     #   sysEx
     def __init__(self, midiData):
         #midi event data
+        self.midiData = midiData
+        self.deltaTime = None
         self.noteNumber = None
         self.velocity = None
         self.controllerNumber = None
         self.programNumber = None
         self.aftertouchValue= None
         self.pitchValue = None
+        #analyze data
+        tempData = midiData
+        temp = 0
+        while Util.msbIsOne(tempData[temp:]):
+            temp = temp+1
+        deltaTime = tempData[:temp]
+        tempData = tempData[temp:]
+        self.deltaTime = Util.varLenVal(deltaTime)
+        
         return
     def __str__(self):
-        return "MidiEvent"
+        return ("MidiEvent " + str(self.midiData) +
+                " deltaTime: " + str(self.deltaTime))
 
 #contains data from the header chunk
 class HeaderData:
