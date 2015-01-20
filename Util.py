@@ -26,7 +26,6 @@ class Util:
         if len(varLenBytes) == 0:
             return 0
         varLenArray = bytearray(varLenBytes)
-        print(varLenArray[0] & b'\x7f'[0])
         returnValBytes = bytearray.fromhex(
             Util.paddedHex(varLenArray[0] & b'\x7f'[0]))
         for i in range(len(varLenBytes) - 1):
@@ -34,7 +33,6 @@ class Util:
             returnValBytes = Util.lshiftByteArray(returnValBytes, 7)
             returnValBytes[len(returnValBytes)-1] = (
                 returnValBytes[len(returnValBytes)-1] | nextByte)
-            print(returnValBytes)
         return int.from_bytes(returnValBytes, "big")
 
     def msbIsOne(byte): #returns true if the msb of a bytes object is 1
