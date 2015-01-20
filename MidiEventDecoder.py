@@ -18,6 +18,7 @@ class MidiEventDecoder:
     def nextEvent(self):
         return self.midiEvent(self.midiParser.readNextData())
     def midiEvent(self, midiData):
+        print(midiData)
         #check if TrackHeader
         if midiData[0:4] == b'MTrk':
             return TrackHeader(midiData)#MidiEvent(b'\x00', midiData)
@@ -33,7 +34,7 @@ class MidiEventDecoder:
                 return MetaEvent(deltaTime, tempData)
         if midiData[0:1] == b'\xf0' or midiData[0:1] == b'\xf7':
                 return SystemEvemt(deltaTime, tempData)
-        return MidiEvent(deltaTime, tempData)
+        return ChannelEvent(deltaTime, tempData)
     def close(self):
         self.midiParser.close()
 
@@ -127,6 +128,7 @@ class SystemEvent(MidiEvent):
 
 class ChannelEvent(MidiEvent):
     def __init__(self, deltaTime, midiData):
+        print(deltaTime)
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
