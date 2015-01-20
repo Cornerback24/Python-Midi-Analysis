@@ -18,7 +18,6 @@ class MidiEventDecoder:
     def nextEvent(self):
         return self.midiEvent(self.midiParser.readNextData())
     def midiEvent(self, midiData):
-        print(midiData)
         #check if TrackHeader
         if midiData[0:4] == b'MTrk':
             return TrackHeader(midiData)#MidiEvent(b'\x00', midiData)
@@ -61,18 +60,6 @@ class MidiEvent:
         self.programNumber = None
         self.aftertouchValue= None
         self.pitchValue = None
-        #analyze data
-        if midiData[0:4] == b'MTrk':
-            self.eventClass = "TrackHeader"
-            return
-        #check if 
-        #event class/type
-        if Util.msbIsOne(midiData): #otherwise running status
-            if midiData[0:1] == b'\xff':
-                self.eventClass = "Meta"
-            if midiData[0:1] == b'\xf0' or midiData[0:1] == b'\xf7':
-                self.eventClass = "System"
-        
         return
     
     def __str__(self):
@@ -128,7 +115,6 @@ class SystemEvent(MidiEvent):
 
 class ChannelEvent(MidiEvent):
     def __init__(self, deltaTime, midiData):
-        print(deltaTime)
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
