@@ -40,4 +40,10 @@ class Util:
         return (byte[0] & int('80',16)) > 0
 
     #maps [byte with event type and channel] & b'\xf0' to event type
-    ChannelEventDict = {int('80', 16) : "NoteOff"}
+    ChannelEventDict = {int('80', 16) : "NoteOff",
+                        int('90', 16) : "NoteOn",
+                        int('a0', 16) : "NoteAftertouch",
+                        int('b0', 16) : "Controller",
+                        int('c0', 16) : "ProgramChange",
+                        int('d0', 16) : "ChannelAftertouch",
+                        int('e0', 16) : "PitchBend"}

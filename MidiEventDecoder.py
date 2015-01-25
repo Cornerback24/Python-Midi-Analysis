@@ -118,13 +118,25 @@ class ChannelEvent(MidiEvent):
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
-        if midiData[0] & int('f0',16) in Util.ChannelEventDict:
-            self.eventType = Util.ChannelEventDict[midiData[0] & int('f0',16)]
+        if Util.msbIsOne(midiData):
+            self.runningStatus = False
+            if midiData[0] & int('f0',16) in Util.ChannelEventDict:
+                self.eventType = Util.ChannelEventDict[midiData[0] & int('f0',16)]
+                self.channel = midiData[0] & int('0f',16)
+                ChannelEvent.prevEventData = (self.eventType, self.channel)
+            else:
+                self.eventType = "Unknown"
         else:
-            self.eventType = "Unknown" 
+            self.eventType, self.channel = ChannelEvent.prevEventData
+            self.runningStatus = True
     def __str__(self):
         return ("Channel " + str(self.midiData) + " deltaTime: "
-                + str(self.deltaTime) + " eventType: " + self.eventType)
+                + str(self.deltaTime) + " eventType: " + self.eventType +
+                " channel: " + str(self.channel) + "\n\t" +
+                "runningStatus: " + str(self.runningStatus))
+
+    #used for running status
+    prevEventData = ()
 
 
 
