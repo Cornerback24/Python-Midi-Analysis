@@ -100,9 +100,12 @@ class MetaEvent(MidiEvent):
         self.eventClass = "Meta"
         self.midiData = midiData
         self.deltaTime = Util.varLenVal(deltaTime)
+        self.eventType = None
+        if midiData[1] in Util.MetaEventDict:
+            self.eventType = Util.MetaEventDict[midiData[1]]
     def __str__(self):
         return ("Meta " + str(self.midiData) + " deltaTime: "
-                + str(self.deltaTime))
+                + str(self.deltaTime) + " eventType: " + self.eventType)
 
 class SystemEvent(MidiEvent):
     def __init__(self, deltaTime, midiData):
