@@ -118,9 +118,13 @@ class ChannelEvent(MidiEvent):
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
+        if midiData[0] & int('f0',16) in Util.ChannelEventDict:
+            self.eventType = Util.ChannelEventDict[midiData[0] & int('f0',16)]
+        else:
+            self.eventType = "Unknown" 
     def __str__(self):
         return ("Channel " + str(self.midiData) + " deltaTime: "
-                + str(self.deltaTime))
+                + str(self.deltaTime) + " eventType: " + self.eventType)
 
 
 
