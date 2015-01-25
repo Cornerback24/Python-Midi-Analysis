@@ -118,22 +118,50 @@ class ChannelEvent(MidiEvent):
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
+        self.eventType = None
+        self.noteNumber = None
+        self.velocity = None
+        self.aftertouchValue = None
+        self.controllerNumber = None
+        self.controllerValue = None
+        self.programNumber = None #use for ProgramChange
+        self.pitchValue = None #used for PitchBend
+        #read eventType and channel
         if Util.msbIsOne(midiData):
             self.runningStatus = False
             if midiData[0] & int('f0',16) in Util.ChannelEventDict:
                 self.eventType = Util.ChannelEventDict[midiData[0] & int('f0',16)]
                 self.channel = midiData[0] & int('0f',16)
                 ChannelEvent.prevEventData = (self.eventType, self.channel)
-            else:
-                self.eventType = "Unknown"
         else:
             self.eventType, self.channel = ChannelEvent.prevEventData
             self.runningStatus = True
+        #set applicable values
+        if (self.eventType == "NoteOff" or self.eventType == "NoteOn"):
+            self.noteNumber = midiData[1]
+            self.velocity = midiData[2]
+        if self.eventType == "NoteAfterTouch":
+            self.noteNumber = midiData[1]
+            self.aftertouchValue = midiData[2]
+        if self.eventType == "Controller":
+            self.controllerNumber = midiData[1]
+            self.controllerValue = midiData[2]
+        if self.eventType == "ProgramChange":
+            self.programNumber = midiData[1]
+        if self.eventType == "ChannelAftertouch":
+            self.aftertouchValue = midiData[1]
+            
     def __str__(self):
         return ("Channel " + str(self.midiData) + " deltaTime: "
                 + str(self.deltaTime) + " eventType: " + self.eventType +
                 " channel: " + str(self.channel) + "\n\t" +
-                "runningStatus: " + str(self.runningStatus))
+                "runningStatus: " + str(self.runningStatus) +
+                " noteNumber: " + str(self.noteNumber) +
+                " velocity: " + str(self.velocity) + "\n\t" +
+                "aftertouchValue: " + str(self.aftertouchValue) +
+                " controllerNumber: " + str(self.controllerNumber) +
+                " controllerValue: " + str(self.controllerValue) + "\n\t" +
+                "programNumber: " + str(self.programNumber))
 
     #used for running status
     prevEventData = ()
