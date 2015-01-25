@@ -35,5 +35,9 @@ class Util:
                 returnValBytes[len(returnValBytes)-1] | nextByte)
         return int.from_bytes(returnValBytes, "big")
 
+    @staticmethod
     def msbIsOne(byte): #returns true if the msb of a bytes object is 1
         return (byte[0] & int('80',16)) > 0
+
+    #maps [byte with event type and channel] & b'\xf0' to event type
+    ChannelEventDict = {int('80', 16) : "NoteOff"}
