@@ -137,6 +137,9 @@ class ChannelEvent(MidiEvent):
             self.eventType, self.channel = ChannelEvent.prevEventData
             self.runningStatus = True
         #set applicable values
+        if self.runningStatus:
+            #so that the indicies of the data are correct
+            midiData = b'\x00' + midiData
         if (self.eventType == "NoteOff" or self.eventType == "NoteOn"):
             self.noteNumber = midiData[1]
             self.velocity = midiData[2]
@@ -150,6 +153,11 @@ class ChannelEvent(MidiEvent):
             self.programNumber = midiData[1]
         if self.eventType == "ChannelAftertouch":
             self.aftertouchValue = midiData[1]
+        if self.eventType == "PitchBend":
+            #NOTE: this relies on Util.varLenVal not actually caring if
+            #the format is an actual valid varaible length value
+            #(and thus completly ignoring the msb of every byte)
+            self.pitchValue = Util.varLenVal(midiData[2:3] + midiData[1:2])
             
     def __str__(self):
         return ("Channel " + str(self.midiData) + " deltaTime: "
