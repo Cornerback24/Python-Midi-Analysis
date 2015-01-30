@@ -5,7 +5,7 @@ from MidiEventDecoder import MidiEventDecoder
 from MidiEventDecoder import MidiEvent
 from MidiEventDecoder import HeaderData
 
-midi_file = "one_note.mid" #testMidiFile.mid
+midi_file = "testMidiFile.mid" #testMidiFile.mid
 print(midi_file)
 midiParser = MidiParser(midi_file)
 

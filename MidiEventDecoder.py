@@ -171,6 +171,9 @@ class ChannelEvent(MidiEvent):
             self.pitchValue = Util.varLenVal(midiData[2:3] + midiData[1:2])
             
     def __str__(self):
+        if self.eventType == "Controller":
+            return ("Channel " + str(self.midiData) + " deltaTime: "
+            + str(self.deltaTime) + " (Controller)")
         return ("Channel " + str(self.midiData) + " deltaTime: "
                 + str(self.deltaTime) + " eventType: " + self.eventType +
                 " channel: " + str(self.channel) + "\n\t" +
