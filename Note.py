@@ -11,4 +11,6 @@ class Note:
     def sortVal(self):
         return ((self.time + 1)*1000 + self.bank*20 + self.chan
                 + self.pitch*.001)
+    def __lt__(self, other):
+        return self.sortVal() < other.sortVal()
         

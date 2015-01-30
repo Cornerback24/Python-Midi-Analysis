@@ -5,7 +5,15 @@ from MidiEventDecoder import MidiEventDecoder
 from MidiEventDecoder import MidiEvent
 from MidiEventDecoder import HeaderData
 
-midiParser = MidiParser("testMidiFile.mid")
+midi_file = "one_note.mid" #testMidiFile.mid
+print(midi_file)
+midiParser = MidiParser(midi_file)
+
+def printHex(_bytes):
+    temp = ""
+    for i in range (len(_bytes)):
+        temp = temp + " " + str(hex(_bytes[i]))
+    print(temp)
 
 '''
 a = (midiParser.readNextData() + midiParser.readNextData()
@@ -42,11 +50,11 @@ b = bytearray(b)
 print(Util.varLenVal(b))
 
 print("------------")
-midiData = MidiData("testMidiFile.mid")
+midiData = MidiData(midi_file)
 
 print("--------------")
 #testing MidiEventDecoder
-eventDecoder = MidiEventDecoder("testMidiFile.mid")
+eventDecoder = MidiEventDecoder(midi_file) #testMidiFile.mid
 print(eventDecoder.headerData())
 eventData = eventDecoder.nextEvent().midiData
 #print(int.from_bytes(eventData[0:1],"big"))
