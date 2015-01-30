@@ -101,6 +101,15 @@ class MetaEvent(MidiEvent):
         self.midiData = midiData
         self.deltaTime = Util.varLenVal(deltaTime)
         self.eventType = None
+        self.dataLength = midiData[2:3]
+        i = 2
+        while Util.msbIsOne(midiData[i:i+1]):
+            self.dataLength = self.dataLength + midiData[i+1:i+2]
+            i = i+1
+        i = i+1
+        self.data = midiData[i:]
+        #coverts bytes to a string
+        self.data = str(self.data)[2:len(str(self.data))-1]
         if midiData[1] in Util.MetaEventDict:
             self.eventType = Util.MetaEventDict[midiData[1]]
         if self.eventType == "SequenceNumber":

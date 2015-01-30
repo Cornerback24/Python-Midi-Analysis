@@ -49,8 +49,6 @@ b = b'\x81\x7f'
 b = bytearray(b)
 print(Util.varLenVal(b))
 
-print("------------")
-midiData = MidiData(midi_file)
 
 print("--------------")
 #testing MidiEventDecoder
