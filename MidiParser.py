@@ -49,6 +49,10 @@ class MidiParser:
         dataLength = 1
         if Util.msbIsOne(firstByte): #not running status
             num = dataLength = 2
+        #program change and channel aftertouch do not have second parameter
+        if ((((firstByte[0] & int('f0',16)) >> 4 ) == int('0c', 16))
+            or (((firstByte[0] & int('f0',16)) >> 4 ) == int('0c', 16))):
+            dataLength = 1
         return firstByte + self.readNextBytes(dataLength)
     def readMetaEvent(self, firstByte):
         metaEventType = self.readNextByte()
