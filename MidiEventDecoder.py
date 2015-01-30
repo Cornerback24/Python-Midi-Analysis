@@ -103,9 +103,17 @@ class MetaEvent(MidiEvent):
         self.eventType = None
         if midiData[1] in Util.MetaEventDict:
             self.eventType = Util.MetaEventDict[midiData[1]]
+        if self.eventType == "SequenceNumber":
+            self.sequenceNumber = int.from_bytes(midiData[3:], "big")
+        if self.eventType == "SetTempo":
+            #micro seconds per quarter note
+            self.usPerQuarter = int.from_bytes(midiData[4:], "big")
     def __str__(self):
-        return ("Meta " + str(self.midiData) + " deltaTime: "
+        s = ("Meta " + str(self.midiData) + " deltaTime: "
                 + str(self.deltaTime) + " eventType: " + self.eventType)
+        if self.eventType == "SetTempo":
+            s = s + "\n\t usPerQuarter: " + str(self.usPerQuarter)
+        return s
 
 class SystemEvent(MidiEvent):
     def __init__(self, deltaTime, midiData):
