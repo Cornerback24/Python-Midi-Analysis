@@ -100,6 +100,7 @@ class MetaEvent(MidiEvent):
         self.eventClass = "Meta"
         self.midiData = midiData
         self.deltaTime = Util.varLenVal(deltaTime)
+        self.startTime = None
         self.eventType = None
         self.dataLength = midiData[2:3]
         i = 2
@@ -129,6 +130,7 @@ class SystemEvent(MidiEvent):
         self.eventClass = "System"
         self.midiData = midiData
         self.deltaTime = Util.varLenVal(deltaTime)
+        self.startTime = None
     def __str__(self):
         return ("System " + str(self.midiData) + " deltaTime: "
                 + str(self.deltaTime))
@@ -138,6 +140,7 @@ class ChannelEvent(MidiEvent):
         self.midiData = midiData
         self.eventClass = "Channel"
         self.deltaTime = Util.varLenVal(deltaTime)
+        self.startTime = None
         self.eventType = None
         self.noteNumber = None
         self.velocity = None
