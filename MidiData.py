@@ -1,5 +1,6 @@
 from MidiEventDecoder import MidiEventDecoder
 from TrackData import TrackData
+from TrackData import TempoChanges
 
 #contains the finalized data after anylisis
 class MidiData:
@@ -19,9 +20,9 @@ class MidiData:
             self.ticksPerBeat = headerData.ticksPerBeat
 
         #maps running total of delta times to microsecondsPerQuarter
-        self.tempoChanges = {}
+        self.tempoChanges = TempoChanges()
         self.trackZeroEvents = []
-        self.tracks = {} #map instrument names to tracks
+        self.tracks = []
 
         deltaTimeTotal = 0    
         #should be a track header
@@ -35,7 +36,7 @@ class MidiData:
             self.trackZeroEvents.append(event)
             if (event.eventClass == "Meta" and
                 event.eventType == "SetTempo"):
-                self.tempoChanges[deltaTimeTotal] = event.usPerQuarter
+                self.tempoChanges.addTempoChange(deltaTimeTotal, event)
                 
 
         #read in each track
@@ -45,12 +46,15 @@ class MidiData:
             trackName = "Track" + str(tracknum)
             #should be a track header
             event = self.eventDecoder.nextEvent()
-            trackData = TrackData()
+            trackData = TrackData(trackName)
             while not(event.eventClass == "Meta"
                 and event.eventType == "EndOfTrack"):
                 event = self.eventDecoder.nextEvent()
-            self.tracks[trackName] = trackData
+                trackData.addEvent(event)
+            self.tracks.append(trackData)
             
 #this line just for testing
 MidiData("testMidiFile.mid")
+
+
         
