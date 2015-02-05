@@ -1,16 +1,26 @@
+from Note import Note
+
 class TrackData:
     def __init__(self, name=""):
         self.notes = []
+        self.incompleteNotes = {} #maps pitches to notes without end times
         self.events = []
         self.name = name
         return
     def addEvent(self, event):
         self.events.append(event)
-        #print(event)
         if (event.eventClass == "Meta" and
             event.eventType == "Sequence/TrackName"):
             self.name = event.data
-        return
+        if (event.eventClass == "Channel" and event.eventType == "NoteOn"):
+            self.incompleteNotes[event.noteNumber] = Note(event.startTime,
+                                                          event.noteNumber,
+                                                          event.velocity,
+                                                          event.channel)
+        if (event.eventClass == "Channel" and event.eventType == "NoteOff"):
+            self.incompleteNotes[event.noteNumber].setEndTime(event.startTime)
+            self.notes.append(self.incompleteNotes[event.noteNumber])
+            del self.incompleteNotes[event.noteNumber]
 
 #this is kind of like an ordered dictionary
 class TempoChanges:

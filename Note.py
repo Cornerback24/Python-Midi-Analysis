@@ -6,12 +6,14 @@ class Note:
         self.endTime = None
         self.velocity = velocity
         return
+    def setEndTime(self, endTime):
+        self.endTime = endTime
     def length(self):
         return self.endTime - self.startTime
     #returns a vaule used in sorting the notes
     #notes are sorted by time, pitch
     def sortVal(self):
-        return (self.time + 1)*1000 + self.pitch*.001
+        return (self.startTime + 1)*1000 + self.pitch*.001
     def __lt__(self, other):
         return self.sortVal() < other.sortVal()
         

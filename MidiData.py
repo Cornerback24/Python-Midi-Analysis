@@ -81,9 +81,8 @@ class MidiData:
                 event.setStartTime(msTotal)
                 trackData.addEvent(event)
             self.tracks.append(trackData)
-            
 #this line just for testing
-MidiData("Magic Battle.mid")
+MidiData("testMidiFile.mid")
 
 
         
