@@ -12,24 +12,25 @@ class TrackData:
             self.name = event.data
         return
 
-#this is basiclly and ordered dictionary
+#this is kind of like an ordered dictionary
 class TempoChanges:
     def __init__(self):
-        self.deltaTimeTotal = []
+        self.deltaTimeTotals = []
         self.tempoChangeEvents = []
         self.index = 0
         return
     #tempo changes need to be added in order
     def addTempoChange(self, deltaTimeTotal, event):
-        self.deltaTimeTotal.append(deltaTimeTotal)
+        self.deltaTimeTotals.append(deltaTimeTotal)
         self.tempoChangeEvents.append(event)
     #so that class can be used as a stream
-    def current(self):
-        return (self.deltaTimeTotal[self.index],
-                self.tempoChangeEvets[self.index])
+    def deltaTimeTotal(self):
+        return self.deltaTimeTotals[self.index]
+    def usPerQuarter(self):
+        return self.tempoChangeEvents[self.index].usPerQuarter
     def findNext(self):
         self.index = self.index + 1
-    def hasMoreTempoChanges(self):
-        return self.index < len(self.tempoChangeEvents)
-    def reset(self): #go back to first task
+    def hasMore(self):
+        return self.index + 1 < len(self.tempoChangeEvents)
+    def reset(self): #go back to first tempo change
         self.index = 0
