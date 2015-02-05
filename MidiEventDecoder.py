@@ -65,6 +65,8 @@ class MidiEvent:
     def __str__(self):
         return (self.eventClass + " " + str(self.midiData) +
                 " deltaTime: " + str(self.deltaTime))
+    def setStartTime(self, startTime): #set start time in ms
+        self.startTime = startTime
 
 #contains data from the header chunk
 class HeaderData:
@@ -117,7 +119,7 @@ class MetaEvent(MidiEvent):
             self.sequenceNumber = int.from_bytes(midiData[3:], "big")
         if self.eventType == "SetTempo":
             #micro seconds per quarter note
-            self.usPerQuarter = int.from_bytes(midiData[4:], "big")
+            self.usPerQuarter = int.from_bytes(midiData[3:], "big")
     def __str__(self):
         s = ("Meta " + str(self.midiData) + " deltaTime: "
                 + str(self.deltaTime) + " eventType: " + self.eventType)
