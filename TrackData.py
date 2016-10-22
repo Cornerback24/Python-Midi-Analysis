@@ -1,5 +1,6 @@
 from Note import Note
 
+#contains data for a single track
 class TrackData:
     def __init__(self, name=""):
         self.notes = []
@@ -11,7 +12,7 @@ class TrackData:
         self.events.append(event)
         if (event.eventClass == "Meta" and
             event.eventType == "Sequence/TrackName"):
-            self.name = event.data
+            self.name = event.text
         if (event.eventClass == "Channel" and event.eventType == "NoteOn"):
             self.incompleteNotes[event.noteNumber] = Note(event.startTime,
                                                           event.noteNumber,
@@ -21,6 +22,8 @@ class TrackData:
             self.incompleteNotes[event.noteNumber].setEndTime(event.startTime)
             self.notes.append(self.incompleteNotes[event.noteNumber])
             del self.incompleteNotes[event.noteNumber]
+        if (event.eventClass == "Meta" and event.eventType == "EndOfTrack"):
+            self.notes.sort()
 
 #this is kind of like an ordered dictionary
 class TempoChanges:

@@ -41,7 +41,7 @@ class MidiData:
                 
 
         #read in each track
-        tracknum = 0 #used to create temprary track names
+        tracknum = 0 #used to create temporary track names
         while self.eventDecoder.hasMoreEvents():
             tracknum = tracknum + 1
             trackName = "Track" + str(tracknum)
@@ -82,7 +82,13 @@ class MidiData:
                 trackData.addEvent(event)
             self.tracks.append(trackData)
 #this line just for testing
-MidiData("testMidiFile.mid")
-
-
+            ''''
+midiData = MidiData("testMidiFile.mid")
+for x in midiData.trackZeroEvents:
+    print(x)
+for y in midiData.tracks:
+    print("\n\n----------------------")
+    for x in y.events:
+        print(x)
+'''
         

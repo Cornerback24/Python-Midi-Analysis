@@ -16,8 +16,11 @@ class MidiParser:
         return
     def hasMoreData(self):
         return self.nextByte != b''
+    #true if the current chunk has more bytes (false if a read would be
+    #end of file or the next chuck (header chunck or track chunk). 
     def chunkHasMoreData(self):
         return self.bytesLeftInChunk > 0
+    #returns the data of the next element in bytes
     def readNextData(self):
         if self.nextByte == b'':
             print("Tried to read end of file!")
@@ -62,7 +65,6 @@ class MidiParser:
         return (firstByte + metaEventType +
                 metaEventLength + metaEventData)
     def readSysExEvent(self, firstByte):
-        #TODO write this method
         dataLength = self.readVariableLength()
         return (firstByte + dataLength +
                 self.readNextBytes(Util.varLenVal(dataLength)))
