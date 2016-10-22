@@ -21,6 +21,8 @@ class Util:
 
     #takes a bytes object formatted in variable length and
     #returns the int value represented
+    #does not check if the variable length value is valid, as
+    #it ignores the msb of every byte
     @staticmethod
     def varLenVal(varLenBytes):
         if len(varLenBytes) == 0:
@@ -33,15 +35,27 @@ class Util:
             returnValBytes = Util.lshiftByteArray(returnValBytes, 7)
             returnValBytes[len(returnValBytes)-1] = (
                 returnValBytes[len(returnValBytes)-1] | nextByte)
-        return int.from_bytes(returnValBytes, "big")
+        return int.from_bytes(returnValBytes, "big")        
 
     @staticmethod
     def msbIsOne(byte): #returns true if the msb of a bytes object is 1
         return (byte[0] & int('80',16)) > 0
 
+    #strips a variable length quanity off of a byte array
+    #and returns the rest
     @staticmethod
-    def intFromBytes(byteArray):
-        return int.from_bytes(byteArray, "big")
+    def stripLeadingVariableLength(byteArray):
+        varLenEndIndex = 0
+        while (varLenEndIndex < len(byteArray) and
+               Util.msbIsOne(byteArray[varLenEndIndex:varLenEndIndex + 1])):
+                    varLenEndIndex = varnLenEndIndex + 1
+        #the last byte of a variable length value has msb 0
+        varLenEndIndex = varLenEndIndex + 1
+        return byteArray[varLenEndIndex:]
+
+    @staticmethod
+    def intFromBytes(byteArray, signed = False):
+        return int.from_bytes(byteArray, "big", signed = signed)
 
     #maps [byte with event type and channel] & b'\xf0' to event type
     ChannelEventDict = {int('80', 16) : "NoteOff",
@@ -51,19 +65,3 @@ class Util:
                         int('c0', 16) : "ProgramChange",
                         int('d0', 16) : "ChannelAftertouch",
                         int('e0', 16) : "PitchBend"}
-    MetaEventDict = {0 : "SequenceNumber",
-                     1 : "TextEvent",
-                     2 : "CopyrightNotice",
-                     3 : "Sequence/TrackName",
-                     4 : "InstrumentName",
-                     5 : "Lyrics",
-                     6 : "Marker",
-                     7 : "CuePoint",
-                     9 : "DeviceName",
-                     32 : "MidiChannelPrefix",
-                     47 : "EndOfTrack",
-                     81 : "SetTempo",
-                     84 : "SMPTEOffset",
-                     88 : "TimeSignature",
-                     89 : "KeySignature",
-                     127: "SequencerSpecific"}
