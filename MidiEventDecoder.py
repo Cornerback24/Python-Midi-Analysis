@@ -35,7 +35,15 @@ class MidiEventDecoder:
         midiData = tempData[temp:]
         #Meta Event
         if midiData[0:1] == b'\xff':
-            return MetaEvent(Util.varLenVal(deltaTime), midiData)
+            if midiData[1] in EventDictionaries.META_EVENT_DICTIONARY:
+                metaEventClass = EventDictionaries.META_EVENT_DICTIONARY[midiData[1]]
+            else:
+                metaEventClass = MetaEvent
+            metaEvent = metaEventClass()
+            metaEvent.setDeltaTimeFromBytes(deltaTime)
+            metaEvent.setFromBytes(midiData)
+            return metaEvent
+            #return MetaEvent(Util.varLenVal(deltaTime), midiData)
         #System Event
         if midiData[0:1] == b'\xf0' or midiData[0:1] == b'\xf7':
                 return SystemEvemt(Util.varLenVal(deltaTime), midiData)
