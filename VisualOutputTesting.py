@@ -2,12 +2,11 @@ from MidiParser import MidiParser
 from MidiData import MidiData
 from Util import Util
 from MidiEventDecoder import MidiEventDecoder
-from MidiEventDecoder import MidiEvent
-from MidiEventDecoder import HeaderData
 
 midi_file = "testMidiFile.mid" #testMidiFile.mid
 print(midi_file)
 midiParser = MidiParser(midi_file)
+
 
 def printHex(_bytes):
     temp = ""
@@ -16,12 +15,22 @@ def printHex(_bytes):
     print(temp)
 
 '''
+print("-----------------raw file-----------------------")
+with open(midi_file, 'rb') as file:
+   printHex(file.read())
+file.close()
+print()
+print()
+'''
+
+'''
 a = (midiParser.readNextData() + midiParser.readNextData()
     + midiParser.readNextData() + midiParser.readNextData())
 print(str(a))
 while midiParser.hasMoreData():
     print(midiParser.readNextData())
 '''
+print("---------------Testing MidiParser--------------")
 print("Header def and size: " + str(midiParser.readNextData()))
 headerBody = midiParser.readNextData()
 print("Body of header chunk: " + str(headerBody) + " number of tracks: " + 
@@ -47,14 +56,14 @@ for i in range(65):
 midiParser.close()
 b = b'\x81\x7f'
 b = bytearray(b)
-print(Util.varLenVal(b))
+print(Util.varLenVal(b))    
 
 
-print("--------------")
+print("\n\n\n-----Testing MidiEventDecoder---------")
 #testing MidiEventDecoder
 eventDecoder = MidiEventDecoder(midi_file) #testMidiFile.mid
 print(eventDecoder.headerData())
-eventData = eventDecoder.nextEvent().midiData
+#eventData = eventDecoder.nextEvent().midiData
 #print(int.from_bytes(eventData[0:1],"big"))
 #print(Util.msbIsOne(eventData))
 #print(type(eventData))

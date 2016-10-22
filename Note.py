@@ -5,9 +5,12 @@ class Note:
         self.startTime = start
         self.endTime = None
         self.velocity = velocity
+        self.releaseVelocity = None
         return
     def setEndTime(self, endTime):
         self.endTime = endTime
+    def setReleaseVelocity(self, releaseVelocity):
+        self.releaseVelocity = releaseVelocity
     def length(self):
         return self.endTime - self.startTime
     #returns a vaule used in sorting the notes
