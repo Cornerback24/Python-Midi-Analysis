@@ -8,6 +8,7 @@ from Util import Util
 class MidiEventDecoder:
     def __init__(self, midiFilename):
         self.midiParser = MidiParser(midiFilename)
+        self.runningStatus = False
         return
     def hasMoreEvents(self):
         return self.midiParser.hasMoreData()
@@ -24,7 +25,9 @@ class MidiEventDecoder:
     def midiEvent(self, midiData):
         #check if TrackHeader
         if midiData[0:4] == b'MTrk':
-            return TrackHeader(midiData)#MidiEvent(b'\x00', midiData)
+            trackHeader = TrackHeader()
+            trackHeader.setFromBytes(midiData)
+            return trackHeader
         #find deltaTime
         tempData = midiData
         temp = 0
@@ -43,11 +46,26 @@ class MidiEventDecoder:
             metaEvent.setDeltaTimeFromBytes(deltaTime)
             metaEvent.setFromBytes(midiData)
             return metaEvent
-            #return MetaEvent(Util.varLenVal(deltaTime), midiData)
         #System Event
         if midiData[0:1] == b'\xf0' or midiData[0:1] == b'\xf7':
-                return SystemEvemt(Util.varLenVal(deltaTime), midiData)
-        return ChannelEvent(Util.varLenVal(deltaTime), midiData)
+            systemEvent = SystemExclusiveEvent()
+            systemEvent.setDeltaTimeFromBytes(deltaTime)
+            systemEvent.setFromBytes(midiData)
+            return systemEvent
+        #Channel Event
+        if Util.msbIsOne(midiData): #running status
+            self.lastChannelStatusByte = midiData[0]
+        else: #not running status
+            midiData = self.lastChannelStatusByte + midiData
+        channelEventIdentifier = midiData[0] & int('f0',16)
+        if (channelEventIdentifier in EventDictionaries.CHANNEL_EVENT_DICTIONARY):
+            channelEventClass = EventDictionaries.CHANNEL_EVENT_DICTIONARY[channelEventIdentifier]
+        else:
+            channelEventClass = ChannelEvent
+        channelEvent = channelEventClass()
+        channelEvent.setDeltaTimeFromBytes(deltaTime)
+        channelEvent.setFromBytes(midiData)
+        return channelEvent
     def close(self):
         self.midiParser.close()
 

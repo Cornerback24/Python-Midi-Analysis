@@ -27,14 +27,14 @@ class HeaderData:
         return
     
 class TrackHeader():
-    def __init__(self, midiData):
-        self.midiData = midiData
-        self.eventClass = "TrackHeader"
-    def setFromBytes(self, midiDataBytes):
-        return #TODO
+    def setFromBytes(self, midiData):
+        self.chunkSize = Util.intFromBytes(midiData[4:])
     def __str__(self):
-        return "Track Header " + str(self.midiData)
+        return "Track Header, Chunk Size: " + str(self.chunkSize)
 
+#parent class for all midi events with delta time information
+#deltaTime and all relavent data must be set on all midi events
+#(if data is not set, __str__ will fail)
 class MidiEvent:
     #set the delta time in clock ticks from the bytes representing delta time
     def setDeltaTimeFromBytes(self, deltaTimeBytes):
@@ -49,7 +49,7 @@ class MidiEvent:
     def setStartTime(self, startTime): #set start time in ms
         self.startTime = startTime    
 
-######################### Meta Event ################################################
+######################### Meta Events ################################################
 class MetaEvent(MidiEvent):
     def setFromBytes(self, midiData):
         print("Set bytes called on parent event class!")
@@ -61,7 +61,7 @@ class SequenceNumberEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.sequenceNumber = int.from_bytes(eventData, "big")
     def __str__(self):
-        return (super().__str__() + " eventType: Sequence Number" +
+        return (super().__str__() + ", eventType: Sequence Number" +
             "\n\t Sequence Number: " + str(self.sequenceNumber))
 
 class TextEvent(MetaEvent):
@@ -69,7 +69,7 @@ class TextEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.text = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Text" +
+        return (super().__str__() + ", eventType: Text" +
             "\n\t Text: " + str(self.text))
 
 class CopyrightNoticeEvent(MetaEvent):
@@ -77,7 +77,7 @@ class CopyrightNoticeEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.copyrightNotice = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Copyright Notice" +
+        return (super().__str__() + ", eventType: Copyright Notice" +
                 "\n\t Copyright Notice: " + str(self.copyrightNotice))
 
 class TrackNameEvent(MetaEvent):
@@ -85,7 +85,7 @@ class TrackNameEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.trackName = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Sequence/Track Name" +
+        return (super().__str__() + ", eventType: Sequence/Track Name" +
             "\n\t Track Name: " + str(self.trackName))
 
 class InstrumentNameEvent(MetaEvent):
@@ -93,7 +93,7 @@ class InstrumentNameEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.instrumentName = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Instrument Name" +
+        return (super().__str__() + ", eventType: Instrument Name" +
             "\n\t Instrument Name: " + str(self.instrumentName))
 
 class LyricsEvent(MetaEvent):
@@ -101,7 +101,7 @@ class LyricsEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.lyrics = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Lyrics" +
+        return (super().__str__() + ", eventType: Lyrics" +
                 "\n\t Lyrics: " + str(self.lyrics))
 
 class MarkerEvent(MetaEvent):
@@ -109,7 +109,7 @@ class MarkerEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.marker = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType:Marker" +
+        return (super().__str__() + ", eventType:Marker" +
                 "\n\t Marker: " + str(self.marker))
 
 class CuePointEvent(MetaEvent):
@@ -117,7 +117,7 @@ class CuePointEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.cuePoint = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Cue Point" +
+        return (super().__str__() + ", eventType: Cue Point" +
                 "\n\t Cue Point: " + str(self.cuePoint))
     
 class ProgramNameEvent(MetaEvent):
@@ -125,7 +125,7 @@ class ProgramNameEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.programName = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Program Name" +
+        return (super().__str__() + ", eventType: Program Name" +
                 "\n\t Program Name: " + str(self.programName))
 
 class DeviceNameEvent(MetaEvent):
@@ -133,7 +133,7 @@ class DeviceNameEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.deviceName = eventData.decode()
     def __str__(self):
-        return (super().__str__() + " eventType: Device Name" +
+        return (super().__str__() + ", eventType: Device Name" +
                 "\n\t Device Name: " + str(self.deviceName))
 
 class MidiChannelPrefixEvent(MetaEvent):
@@ -141,7 +141,7 @@ class MidiChannelPrefixEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.channel = Util.intFromBytes(eventData)
     def __str__(self):
-        return (super().__str__() + " eventType: Midi Channel Prefix"
+        return (super().__str__() + ", eventType: Midi Channel Prefix"
                 + "\n\t Channel: " + str(self.channel))
 
 class EndOfTrackEvent(MetaEvent):
@@ -149,7 +149,7 @@ class EndOfTrackEvent(MetaEvent):
         #nothing to set for end of track
         return
     def __str__(self):
-        return super().__str__() + " eventType: End of Track"
+        return super().__str__() + ", eventType: End of Track"
 
 class SetTempoEvent(MetaEvent):
     def setFromBytes(self, midiData):
@@ -157,7 +157,7 @@ class SetTempoEvent(MetaEvent):
         eventData = Util.stripLeadingVariableLength(midiData[2:])
         self.tempo = Util.intFromBytes(eventData)
     def __str__(self):
-        return (super().__str__() + " eventType: Set Tempo"
+        return (super().__str__() + ", eventType: Set Tempo"
                 + "\n\t Tempo (microseconds per quarter note): "
                     + str(self.tempo))
 
@@ -184,13 +184,13 @@ class SMPTEOffsetEvent(MetaEvent):
         #always 100 sub-frames per frame
         self.subFrame = Util.intFromBytes(eventData[4:])
     def __str__(self):
-        return (super().__str__() + " eventType: SMPTE Offset"
+        return (super().__str__() + ", eventType: SMPTE Offset"
                 + "\n\t Frame Rate: " + str(self.frameRate)
-                + " Drop Frame: " + str(self.dropFrame)
+                + ", Drop Frame: " + str(self.dropFrame)
                 + "\n\t Hour: " + str(self.hour)
-                + " Minute: " + str(self.minute)
+                + ", Minute: " + str(self.minute)
                 + "\n\t Frame: " + str(self.frame)
-                + " Sub-Frame: " + str(self.subFrame))
+                + ", Sub-Frame: " + str(self.subFrame))
 
 class TimeSignatureEvent(MetaEvent):
     def setFromBytes(self, midiData):
@@ -204,11 +204,11 @@ class TimeSignatureEvent(MetaEvent):
         #default is 8
         self.thirtySecondNotesPerBeat = Util.intFromBytes(eventData[3:])
     def __str__(self):
-        return (super().__str__() + " eventType: Time Signature"
+        return (super().__str__() + ", eventType: Time Signature"
                 + "\n\t Time Signature: " + str(self.numerator)
                     + "/" + str(self.denominator)
                 + "\n\t Beats per tick: " + str(self.beatsPerTick)
-                + " 32nd notes per beat: " + str(self.thirtySecondNotesPerBeat))
+                + ", 32nd notes per beat: " + str(self.thirtySecondNotesPerBeat))
 
 class KeySignatureEvent(MetaEvent):
     def setFromBytes(self, midiData):
@@ -223,7 +223,7 @@ class KeySignatureEvent(MetaEvent):
         majorOrMinor = ""
         if (self.numberOfAccidentals > 0):
            majorOrMinor = ", major" if self.majorKey else ", minor" 
-        return (super().__str__() + " eventType: Key Signature"
+        return (super().__str__() + ", eventType: Key Signature"
                 + "\n\t Number of " + str(sharpsOrFlats) + ": "
                     + str(self.numberOfAccidentals) + majorOrMinor)
 
@@ -231,89 +231,114 @@ class SequencerSpecificEvent():
     def setFromBytes(self, midiData):
         self.eventData = Util.stripLeadingVariableLength(midiData[2:])
     def __str__(self):
-        return (super().__str__() + " eventType: Sequencer Specific"
+        return (super().__str__() + ", eventType: Sequencer Specific"
                 + "\n\t Raw data (without variable-length)" + str(self.eventData))
         
 
-############################ System Event #########################################
-class SystemEvent(MidiEvent):
-    def __init__(self, deltaTime, midiData):
-        super().__init__(deltaTime)
-        self.eventClass = "System"
-        self.midiData = midiData
-        self.startTime = None
+############################ System Exclusice Events #########################################
+class SystemExclusiveEvent(MidiEvent):
     def setFromBytes(self, midiData):
-        return #TODO
+        self.eventData = Util.stripLeadingVariableLength(midiData[1:])
     def __str__(self):
-        return ("System " + str(self.midiData) + " deltaTime: "
-                + str(self.deltaTime))                        
+        return ("System " + " deltaTime: " + str(self.deltaTime)
+                + "\n\t Raw data (without variable-length)" + str(self.eventData))                        
 
-######################### Channel Event ############################################
+######################### Channel Events ############################################
 class ChannelEvent(MidiEvent):
-    def __init__(self, deltaTime, midiData):
-        self.deltaTime = deltaTime
-        self.midiData = midiData
-        self.eventClass = "Channel"
-        self.startTime = None
-        self.eventType = None
-        self.noteNumber = None
-        self.velocity = None
-        self.aftertouchValue = None
-        self.controllerNumber = None
-        self.controllerValue = None
-        self.programNumber = None #use for ProgramChange
-        self.pitchValue = None #used for PitchBend
-        #read eventType and channel
-        if Util.msbIsOne(midiData):
-            self.runningStatus = False
-            if midiData[0] & int('f0',16) in Util.ChannelEventDict:
-                self.eventType = Util.ChannelEventDict[midiData[0] & int('f0',16)]
-                self.channel = midiData[0] & int('0f',16)
-                ChannelEvent.prevEventData = (self.eventType, self.channel)
-        else:
-            self.eventType, self.channel = ChannelEvent.prevEventData
-            self.runningStatus = True
-        #set applicable values
-        if self.runningStatus:
-            #so that the indicies of the data are correct
-            midiData = b'\x00' + midiData
-        if (self.eventType == "NoteOff" or self.eventType == "NoteOn"):
-            self.noteNumber = midiData[1]
-            self.velocity = midiData[2]
-        if self.eventType == "NoteAfterTouch":
-            self.noteNumber = midiData[1]
-            self.aftertouchValue = midiData[2]
-        if self.eventType == "Controller":
-            self.controllerNumber = midiData[1]
-            self.controllerValue = midiData[2]
-        if self.eventType == "ProgramChange":
-            self.programNumber = midiData[1]
-        if self.eventType == "ChannelAftertouch":
-            self.aftertouchValue = midiData[1]
-        if self.eventType == "PitchBend":
-            #NOTE: this relies on Util.varLenVal not actually caring if
-            #the format is an actual valid varaible length value
-            #(and thus completly ignoring the msb of every byte)
-            self.pitchValue = Util.varLenVal(midiData[2:3] + midiData[1:2])
+    #when calling this on a child class, midiData should have a status byte
     def setFromBytes(self, midiData):
         return print("Set bytes called on parent event class!")
     def __str__(self):
-        if self.eventType == "Controller":
-            return ("Channel " + str(self.midiData) + " deltaTime: "
-            + str(self.deltaTime) + " (Controller)")
-        return ("Channel " + str(self.midiData) + " deltaTime: "
-                + str(self.deltaTime) + " eventType: " + self.eventType +
-                " channel: " + str(self.channel) + "\n\t" +
-                "runningStatus: " + str(self.runningStatus) +
-                " noteNumber: " + str(self.noteNumber) +
-                " velocity: " + str(self.velocity) + "\n\t" +
-                "aftertouchValue: " + str(self.aftertouchValue) +
-                " controllerNumber: " + str(self.controllerNumber) +
-                " controllerValue: " + str(self.controllerValue) + "\n\t" +
-                "programNumber: " + str(self.programNumber))
+        return "Channel  deltaTime: " + str(self.deltaTime)
 
-    #class variable used for running status
-    prevEventData = ()
+class NoteOffEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.noteNumber = midiData[1]
+        self.velocity = midiData[2]
+    def __str__(self):
+        return (super().__str__() + ", eventType: Note Off"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Note Number: " + str(self.noteNumber)
+                + ", Velocity: " + str(self.velocity))
+
+class NoteOnEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.noteNumber = midiData[1]
+        self.velocity = midiData[2]
+    #note on with velocity zero is really note off
+    def isNoteOff(self):
+        return self.velocity == 0
+    def __str__(self):
+        eventType = ("Note Off (as Note On)" if self.isNoteOff()
+                     else "Note On")
+        return (super().__str__() + ", eventType: " + eventType
+                + ", Channel: " + str(self.channel)
+                + "\n\t Note Number: " + str(self.noteNumber)
+                + ", Velocity: " + str(self.velocity))
+
+class NoteAftertouchEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.noteNumber = midiData[1]
+        self.aftertouchAmount = midiData[2]
+    def __str__(self):
+        return (super().__str__() + ", eventType: Note Aftertouch"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Note Number: " + str(self.noteNumber)
+                + " Aftertouch: " + str(self.aftertouchAmount))
+
+class ControllerEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.controllerType = midiData[1]
+        self.value = midiData[2]
+    def controllerTypeString(self):
+        controllerString = Util.controllerString(self.controllerType)
+        if controllerString == None:
+            return str(self.controllerType)
+        else:
+            return controllerString
+    def __str__(self):
+        return (super().__str__() + ", eventType: Controller"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Controller Type: " + str(self.controllerTypeString())
+                + ", Value: " + str(self.value))
+
+class ProgramChangeEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.programNumber = midiData[1]
+    def __str__(self):
+        return (super().__str__() + ", eventType: Program Change"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Program Number: " + str(self.programNumber))
+
+class ChannelAftertouchEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        self.aftertouchAmount = midiData[1]
+    def __str__(self):
+        return (super().__str__() + ", eventType: Channel Aftertouch"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Aftertouch: " + str(self.aftertouchAmount))
+
+class PitchBendEvent(ChannelEvent):
+    def setFromBytes(self, midiData):
+        self.channel = midiData[0] & int('0f',16)
+        #NOTE: this relies on Util.varLenVal not actually caring if
+        #the format is an actual valid varaible length value
+        #(and thus completly ignoring the msb of every byte)
+        self.bendAmount = Util.varLenVal(midiData[2:3] + midiData[1:2])
+    #pitchValue relative to 8192; positive for increase, negative for decrease
+    def bendAmount(self):
+        return self.bendAmount - 8192
+    def __str__(self):
+        return (super().__str__() + ", eventType: Pitch Bend"
+                + ", Channel: " + str(self.channel)
+                + "\n\t Amout (relative to 8192): "
+                    + str(self.bendAmount()))
 
 class EventDictionaries:
     #maps a meta event type to its class
@@ -334,3 +359,11 @@ class EventDictionaries:
                                              88 : TimeSignatureEvent,
                                              89 : KeySignatureEvent,
                                              127: SequencerSpecificEvent}
+    #maps [byte with event type and channel] & b'\xf0' to event type
+    CHANNEL_EVENT_DICTIONARY = {int('80', 16) : NoteOffEvent,
+                        int('90', 16) : NoteOnEvent,
+                        int('a0', 16) : NoteAftertouchEvent,
+                        int('b0', 16) : ControllerEvent,
+                        int('c0', 16) : ProgramChangeEvent,
+                        int('d0', 16) : ChannelAftertouchEvent,
+                        int('e0', 16) : PitchBendEvent}

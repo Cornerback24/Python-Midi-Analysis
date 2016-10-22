@@ -57,11 +57,69 @@ class Util:
     def intFromBytes(byteArray, signed = False):
         return int.from_bytes(byteArray, "big", signed = signed)
 
+    #returns None if no controller Number Mapped
+    @staticmethod
+    def controllerString(controllerNumber):
+        if controllerNumber in Util.CONTROLLER_DICTIONARY:
+            return Util.CONTROLLER_DICTIONARY[controllerNumber]
+        elif controllerNumber >= 16 and controllerNumber <= 19:
+            return "Genearal Purpose Controller " + str(controllerNumber - 15)
+        elif controllerNumber >= 32 and controllerNumber <= 63:
+            controllerReferenceString = Util.controllerString(controllerNumber - 32)
+            if controllerReferenceString == None:
+                return None
+            return "LSB for " + controllerReferenceString
+        elif controllerNumber >= 75 and controllerNumber <= 79:
+            return "Sound Controller " + str(controllerNumber - 74)
+        elif controllerNumber >= 80 and controllerNumber <= 83:
+            return "General Purpose Controller " + str(controllerNumber - 79)        
+        return None
+
     #maps [byte with event type and channel] & b'\xf0' to event type
-    ChannelEventDict = {int('80', 16) : "NoteOff",
-                        int('90', 16) : "NoteOn",
-                        int('a0', 16) : "NoteAftertouch",
-                        int('b0', 16) : "Controller",
-                        int('c0', 16) : "ProgramChange",
-                        int('d0', 16) : "ChannelAftertouch",
-                        int('e0', 16) : "PitchBend"}
+    CONTROLLER_DICTIONARY = {0 : "Bank Select",
+                             1 : "Modulation",
+                             2 : "Breath Controller",
+                             4 : "Foot Controller",
+                             5 : "Portamento Time",
+                             6 : "Data Entry MSB",
+                             7 : "Main Volume",
+                             8 : "Balance",
+                             10 : "Pan",
+                             11 : "Expression Controller",
+                             12 : "Effect Control 1",
+                             13 : "Effect Control 2",
+                             #0-63 for off, 64-127 for on
+                             64 : "Damper pedal (sustain)",
+                             65 : "Portamento",
+                             66 : "Sostenuto",
+                             67 : "Soft Pedal",
+                             68 : "Legato Footswitch",
+                             69 : "Hold 2",
+                             70 : "Sound Controller 1 (default: Timber Variation)",
+                             71 : "Sound Controller 2 (default: Timber/Harmonic Content)",
+                             72 : "Sound Controller 3 (default: Release Time)",
+                             73 : "Sound Controller 4, (default: Attaci Time)",
+                             74 : "Sound Controller 5, (default: Brightness)",
+                             84 : "Portamento Conrol",
+                             91 : "Effects 1 Depth (formerly External Effects Depth)",
+                             92 : "Effects 2 Depth (formerly Tremolo Depth)",
+                             93 : "Effects 3 Depth (formerly Chorus Depth)",
+                             94 : "Effects 4 Depth (formerly Detune Depth)",
+                             95 : "Effects 5 Depth (formerly Phaser Depth)",
+                             96 : "Data Increment",
+                             97 : "Data Decrement",
+                             98 : "Non-Registered Parameter Number (LSB)",
+                             99 : "Non-Registered Parameter Number (MSB)",
+                             100 : "Registered Parameter Number (LSB)",
+                             101 : "Registered Parameter Number (MSB)",
+                             121 : "Reset All Controllers",
+                             122 : "Local Control",
+                             123 : "All Notes Off",
+                             124 : "Omni Off",
+                             125 : "Omni On",
+                             126 : "Mono On (Poly Off)",
+                             127 : "Poly On (Mono Off)"}
+
+    
+
+    
