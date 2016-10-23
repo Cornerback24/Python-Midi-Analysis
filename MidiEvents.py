@@ -10,10 +10,13 @@ class HeaderData:
         self.formatType = None
         self.numTracks = None
     def __str__(self):
-        s = ("Format type: " + str(self.formatType)
+        s = ("Header Chunck, Format type: " + str(self.formatType)
                 + " Number of tracks: " + str(self.numTracks))
         if self.ticksPerBeat != None:
-            s = s + "\nTicks per Beat: " + str(self.ticksPerBeat)
+            s = s + "\n\t Ticks per beat: " + str(self.ticksPerBeat)
+        if self.framesPerSecond != None:
+            s = s + "\n\t Frames per second: " + str(self.framesPerSecond)
+            s = s + "\n\t Ticks per frame: " + str(self.ticksPerFrame)
         return s
     def setFromBytes(self, headerDefByts, headerBodyBytes):
         self.formatType = int.from_bytes(headerBodyBytes[0:2], "big")
@@ -21,7 +24,9 @@ class HeaderData:
         timeDivision = headerBodyBytes[4:6]
         if Util.msbIsOne(headerBodyBytes): #frames per second
             self.framesPerSecond = timeDivision[0] & int('7f', 16)
-            self.tickesPerFrame = int.from_bytes(timeDivision[1:2], "big")
+            if (self.framesPerSecond == 29):
+                self.framesPerSecond = 29.97
+            self.ticksPerFrame = int.from_bytes(timeDivision[1:2], "big")
         else: #ticks per beat
             self.ticksPerBeat = int.from_bytes(timeDivision, "big")
         return
@@ -173,7 +178,7 @@ class SMPTEOffsetEvent(MetaEvent):
         if (frameRateIdentifier == 1):
             self.frameRate = 25
         if (frameRateIdentifier == 10):
-            self.frameRate = 30
+            self.frameRate = 29.97
             self.dropFrame = True
         if (frameRateIdentifier == 11):
             self.frameRate = 30
@@ -332,13 +337,13 @@ class PitchBendEvent(ChannelEvent):
         #(and thus completly ignoring the msb of every byte)
         self.bendAmount = Util.varLenVal(midiData[2:3] + midiData[1:2])
     #pitchValue relative to 8192; positive for increase, negative for decrease
-    def bendAmount(self):
+    def relativeBendAmount(self):
         return self.bendAmount - 8192
     def __str__(self):
         return (super().__str__() + ", eventType: Pitch Bend"
                 + ", Channel: " + str(self.channel)
                 + "\n\t Amout (relative to 8192): "
-                    + str(self.bendAmount()))
+                    + str(self.relativeBendAmount()))
 
 class EventDictionaries:
     #maps a meta event type to its class
