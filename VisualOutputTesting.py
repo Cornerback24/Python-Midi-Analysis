@@ -3,7 +3,7 @@ from MidiData import MidiData
 from Util import Util
 from MidiEventDecoder import MidiEventDecoder
 
-midi_file = "testMidiFile.mid"
+midi_file = "TestMidiFile2.mid"
 print(midi_file)
 
 
@@ -67,7 +67,7 @@ def testMidiData():
             print(note)
         print()
     print()
-    print("Note F4 329.04s to 339.32s Channel: 11 <-- expected last note (testMidiFile.mid)")
+    print("Note F4 329.04s to 339.32s Channel: 11 <-- expected last note (TestMidiFile2.mid)")
 
 # printRawFile()
 # testMidiParser()

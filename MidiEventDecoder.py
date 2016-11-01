@@ -15,8 +15,8 @@ class MidiEventDecoder:
 
     def hasMoreEvents(self):
         return self.midiParser.hasMoreData()
-    # be sure to call this once before calling nextEvent
 
+    # be sure to call this once before calling nextEvent
     def headerData(self):
         data = HeaderData()
         data.setFromBytes(self.midiParser.readNextData(),
@@ -75,9 +75,3 @@ class MidiEventDecoder:
 
     def close(self):
         self.midiParser.close()
-
-
-
-
-
-
