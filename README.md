@@ -17,23 +17,22 @@ trackData.events contains the midi events in the track, and each event has a sta
 MidiEvents.py.
 TrackData, MidiData, and Note may need to imported.
 
-Structure (only intended output values listed):
-MidiData: contains all data for a midi file (created by calling MidiData("midi_file.mid")
-          where "midi_file.mid" is the path to the midi file)
-    getNumTracks(): number of tracks in the midi file
-    tracks: list of TrackData (one TrackData for each track in the file)
-    getTrack(index): returns the TrackData with the given index (ex. data.getTrack(1) to get the data for the second track)
+Structure (only intended output values listed):  
+MidiData: contains all data for a midi file (created by calling MidiData("midi_file.mid") where "midi_file.mid" is the path to the midi file)  
+  * getNumTracks(): number of tracks in the midi file
+  * tracks: list of TrackData (one TrackData for each track in the file)
+  * getTrack(index): returns the TrackData with the given index (ex. data.getTrack(1) to get the data for the second track)
 
-TrackData: contains all the data for a single track
-    notes: list of Note (one Note for each note in the track)
-    channel: channel
-    events: list of MidiEvents that make up the track (see MidiEvents.py for definitions)
-    name: name of the track
+TrackData: contains all the data for a single track  
+  * notes: list of Note (one Note for each note in the track)
+  * channel: channel
+  * events: list of MidiEvents that make up the track (see MidiEvents.py for definitions)
+  * name: name of the track
 
 Note:
-    pitch: note number
-    startTime: start time in ms
-    endTime: end time in ms
-    velocity: velocity
-    releaseVelocity: release velocity
+  * pitch: note number  
+  * startTime: start time in ms
+  * endTime: end time in ms
+  * velocity: velocity
+  * releaseVelocity: release velocity
     length(): length of the note in ms
