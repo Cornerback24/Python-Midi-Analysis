@@ -68,6 +68,8 @@ def testMidiData():
         print()
     print()
     print("Note F4 329.04s to 339.32s Channel: 11 <-- expected last note (TestMidiFile2.mid)")
+    # print("Note A4 12.50s to 13.00s Channel: 1 <-- expected last note (testingrunningstatus.mid)")
+
 
 # printRawFile()
 # testMidiParser()
