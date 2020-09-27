@@ -1,7 +1,7 @@
 Python-midi-analysis
 ====================
 The idea here is to decode midi files into objects that are easy to extract data from, primary by making tracks into objects that contains notes, which are objects themselves. 
-This will probably only work with type one midi files which are organized so that each track contains data for a separate instrument.
+This works with with type one midi and type zero midi files. For type zero midi files, a single track is creating containing all notes.
 
 (This isn't meant to create or manipulate midi files; it is just to get data from them.)
 
@@ -31,8 +31,11 @@ TrackData: contains all the data for a single track
 
 Note:
   * pitch: note number  
+  * channel: the midi channel
   * startTime: start time in ms
+  * startTimeTicks: start time in ticks
   * endTime: end time in ms
+  * endTimeTicks: end time in ticks
   * velocity: velocity
   * releaseVelocity: release velocity
     length(): length of the note in ms
