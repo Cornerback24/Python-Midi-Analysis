@@ -6,13 +6,14 @@ from MidiEvents import *
 
 # contains the finalized data after analysis
 class MidiData:
-    def __init__(self, midiFilename):
+    def __init__(self, midiFilename, middle_c="C4"):
         self.eventDecoder = MidiEventDecoder(midiFilename)
         headerData = self.eventDecoder.headerData()
         # variables
         self.format = headerData.formatType
         self.numTracks = headerData.numTracks
         self.isTicksPerBeat = False
+        self.middle_c = middle_c
         if headerData.ticksPerBeat is None:
             self.isTicksPerBeat = False
             self.ticksPerSecond = (headerData.framesPerSecond *
@@ -36,10 +37,10 @@ class MidiData:
         while self.eventDecoder.hasMoreEvents():
             trackName = "Track" + str(tracknum)
             tracknum += 1
-            trackData = TrackData(trackName)
+            trackData = TrackData(name=trackName, middle_c=self.middle_c)
             # should be a track header
             event = self.eventDecoder.nextEvent()
-            if not(isinstance(event, TrackHeader)):
+            if not (isinstance(event, TrackHeader)):
                 raise UnexpectedEventException(event, TrackHeader())
             # set up tempoChanges
             tempoChanges.reset()
@@ -47,7 +48,7 @@ class MidiData:
             deltaTimeTotal = 0  # current time in ticks
             msTotal = 0  # current time in ms
             # add events
-            while not(isinstance(event, EndOfTrackEvent)):
+            while not (isinstance(event, EndOfTrackEvent)):
                 event = self.eventDecoder.nextEvent()
                 if isinstance(event, SetTempoEvent):
                     tempoChanges.addTempoChange(deltaTimeTotal, event.tempo)
@@ -58,11 +59,11 @@ class MidiData:
                            nextTotal >= tempoChanges.deltaTimeTotal()):
                         msTotal += ((tempoChanges.deltaTimeTotal() - deltaTimeTotal)*self.msPerBeat/self.ticksPerBeat)
                         deltaTimeTotal = tempoChanges.deltaTimeTotal()
-                        self.msPerBeat = tempoChanges.usPerQuarter()*.001
+                        self.msPerBeat = tempoChanges.usPerQuarter() * .001
                         tempoChanges.findNext()
-                    msTotal += ((nextTotal-deltaTimeTotal)*self.msPerBeat/self.ticksPerBeat)
+                    msTotal += ((nextTotal - deltaTimeTotal) * self.msPerBeat / self.ticksPerBeat)
                 else:
-                    msTotal = (event.deltaTime/self.ticksPerSecond)*.001
+                    msTotal = (event.deltaTime / self.ticksPerSecond) * .001
                 # add event to trackData
                 deltaTimeTotal = nextTotal
                 event.setStartTimeMs(msTotal)

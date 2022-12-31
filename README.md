@@ -6,11 +6,14 @@ This works with with type one midi and type zero midi files. For type zero midi 
 (This isn't meant to create or manipulate midi files; it is just to get data from them.)
 
 At this point, this script should be able to take a format one midi file that has one channel per track,
-and create Notes with start and stop times.  To do this, create a MidiData (ex midiData = MidiData("testMidiFile.mid")).  
-All the data should be initialized by the constructor.  The number of tracks created can be checked by calling midiData.getNumTracks().
+and create Notes with start and stop times.
 
-A TrackData can be retrieved by calling midiData.getTrack(index).  If trackData = midiData.getTrack(index) then
-trackData.notes is a list containing the notes for that track, sorted by start time.  Each Note has a startTime and endTime field, defined in 
+Start by creating a MidiData object with the path to the midi file (ex midiData = MidiData("testMidiFile.mid")). This will parse the midi file and populate the MidiData object.
+By default, when note names are printed, middle c (pitch 60) will be C4. This can be changed to either C3 or C5 by passing it to the MidiData (ex midiData = MidiData("testMidiFile.mid", "C3"))
+The number of tracks created can be checked by calling midiData.getNumTracks().
+
+The MidiData contains TrackData objects for each track in the midi file. A TrackData can be retrieved by calling midiData.getTrack(index).
+TrackData objects have a list of notes in their notes field (ex trackData.notes) sorted by start time.  Each Note has a startTime and endTime field, defined in 
 milliseconds (as well as a length() function that returns the length in milliseconds).  Each Note also has a pitch
 field in the range 0 - 127.  trackData.name contains the name of the track, which may be the name of the instrument on that track.  
 trackData.events contains the midi events in the track, and each event has a startTime field in milliseconds. Midi events are defined in
@@ -38,4 +41,4 @@ Note:
   * endTimeTicks: end time in ticks
   * velocity: velocity
   * releaseVelocity: release velocity
-    length(): length of the note in ms
+  * length(): length of the note in ms

@@ -5,7 +5,7 @@ import bisect
 
 # contains data for a single track
 class TrackData:
-    def __init__(self, name=""):
+    def __init__(self, name="", middle_c="C4"):
         self.notes = []
         # maps pitches to notes without end times
         self.incompleteNotes = {}
@@ -15,6 +15,7 @@ class TrackData:
         # if false, time division is frames per second
         self.isTicksPerBeat = True
         self.debug = False
+        self.middle_c = middle_c
         return
 
     # Events need to be added in order, last event must be end of track
@@ -23,7 +24,7 @@ class TrackData:
         if isinstance(event, TrackNameEvent):
             self.name = event.trackName
         elif (isinstance(event, NoteOnEvent) and
-              not(event.isNoteOff())):
+              not (event.isNoteOff())):
             if event.noteNumber in self.incompleteNotes and self.debug:
                 print("Note on event for note " + str(event.noteNumber)
                       + " already playing, skipping...")
@@ -32,7 +33,8 @@ class TrackData:
                                                               event.startTimeTicks,
                                                               event.noteNumber,
                                                               event.velocity,
-                                                              event.channel)
+                                                              event.channel,
+                                                              self.middle_c)
         elif (isinstance(event, NoteOffEvent) or
               (isinstance(event, NoteOnEvent) and event.isNoteOff())):
             if event.noteNumber in self.incompleteNotes:

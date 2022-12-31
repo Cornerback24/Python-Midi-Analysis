@@ -68,7 +68,7 @@ class MidiEvent:
     # this method is defined in every child class
 
     def setFromBytes(self, midiDataBytes):
-        return print("Set bytes called on parent event class!")
+        print("Set bytes called on parent midi event class!")
 
     def __str__(self):
         return ("Midi Event" + " " +
@@ -85,7 +85,7 @@ class MidiEvent:
 # ---------------------- Meta Events ------------------------------
 class MetaEvent(MidiEvent):
     def setFromBytes(self, midiData):
-        print("Set bytes called on parent event class!")
+        print("Set bytes called on parent meta event class!")
 
     def __str__(self):
         return "Meta  deltaTime: " + str(self.deltaTime)
@@ -247,6 +247,20 @@ class MidiChannelPrefixEvent(MetaEvent):
                 + "\n\t Channel: " + str(self.channel))
 
 
+class MidiPortEvent(MetaEvent):
+    def __init__(self):
+        super().__init__()
+        self.port = None
+
+    def setFromBytes(self, midiData):
+        eventData = Util.stripLeadingVariableLength(midiData[2:])
+        self.port = Util.intFromBytes(eventData)
+
+    def __str__(self):
+        return (super().__str__() + ", eventType: Midi Port"
+                + "\n\t Port: " + str(self.port))
+
+
 class EndOfTrackEvent(MetaEvent):
     def setFromBytes(self, midiData):
         # nothing to set for end of track
@@ -384,7 +398,7 @@ class SequencerSpecificEvent(MetaEvent):
     def __str__(self):
         return (super().__str__() + ", eventType: Sequencer Specific"
                 + "\n\t Raw data (without variable-length)" + str(self.eventData))
-        
+
 
 # --------------------------------- System Exclusive Events ------------------------------
 class SystemExclusiveEvent(MidiEvent):
@@ -398,14 +412,14 @@ class SystemExclusiveEvent(MidiEvent):
 
     def __str__(self):
         return ("System " + " deltaTime: " + str(self.deltaTime)
-                + "\n\t Raw data (without variable-length)" + str(self.eventData))                        
+                + "\n\t Raw data (without variable-length)" + str(self.eventData))
 
 
 # --------------------------------- Channel Events -------------------------------------
 class ChannelEvent(MidiEvent):
     # when calling this on a child class, midiData should have a status byte
     def setFromBytes(self, midiData):
-        return print("Set bytes called on parent event class!")
+        print("Set bytes called on parent channel event class!")
 
     def __str__(self):
         return "Channel  deltaTime: " + str(self.deltaTime)
@@ -570,6 +584,7 @@ class EventDictionaries:
                                              8: ProgramNameEvent,
                                              9: DeviceNameEvent,
                                              32: MidiChannelPrefixEvent,
+                                             33: MidiPortEvent,
                                              47: EndOfTrackEvent,
                                              81: SetTempoEvent,
                                              84: SMPTEOffsetEvent,
