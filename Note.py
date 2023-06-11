@@ -1,37 +1,37 @@
 class Note:
     # start and end times are in ms
-    def __init__(self, start, startTicks, pitch, velocity, channel, middle_c="C4"):
+    def __init__(self, start, start_ticks, pitch, velocity, channel, middle_c="C4"):
         self.pitch = pitch  # note number
         self.channel = channel
-        self.startTime = start
-        self.endTime = None
-        self.startTimeTicks = startTicks
-        self.endTimeTicks = None
+        self.start_time = start
+        self.end_time = None
+        self.start_time_ticks = start_ticks
+        self.end_time_ticks = None
         self.velocity = velocity
-        self.releaseVelocity = None
+        self.release_velocity = None
         self.middle_c = middle_c
         return
 
-    def setEndTime(self, endTime):
-        self.endTime = endTime
+    def set_end_time(self, end_time):
+        self.end_time = end_time
 
-    def setEndTimeTicks(self, endTimeTicks):
-        self.endTimeTicks = endTimeTicks
+    def set_end_time_ticks(self, end_time_ticks):
+        self.end_time_ticks = end_time_ticks
 
-    def setReleaseVelocity(self, releaseVelocity):
-        self.releaseVelocity = releaseVelocity
+    def set_release_velocity(self, release_velocity):
+        self.release_velocity = release_velocity
 
     def length(self):
-        return self.endTime - self.startTime
+        return self.end_time - self.start_time
 
     # returns a value used in sorting the notes
     # notes are sorted by time, pitch
 
-    def sortVal(self):
-        return (self.startTime + 1) * 1000 + self.pitch * .001
+    def sort_val(self):
+        return (self.start_time + 1) * 1000 + self.pitch * .001
 
     def __lt__(self, other):
-        return self.sortVal() < other.sortVal()
+        return self.sort_val() < other.sort_val()
 
     def __str__(self):
         pitches = Note.PITCH_DICTIONARY_C3 if self.middle_c == "C3" else \
@@ -41,8 +41,8 @@ class Note:
         else:
             pitch = str(self.pitch)
         return ("Note " + str(pitch) + " "
-                + str("{0:.2f}".format(round(self.startTime * .001, 2))) + "s to "
-                + str("{0:.2f}".format(round(self.endTime * .001, 2))) + "s"
+                + str("{0:.2f}".format(round(self.start_time * .001, 2))) + "s to "
+                + str("{0:.2f}".format(round(self.end_time * .001, 2))) + "s"
                 + " Channel: " + str(self.channel))
 
     # Middle C (pitch 60) = C3

@@ -7,61 +7,61 @@ midi_file = "TestMidiFile2.mid"
 print(midi_file)
 
 
-def printHex(_bytes):
+def print_hex(_bytes):
     temp = ""
     for i in range(len(_bytes)):
         temp = temp + " " + str(hex(_bytes[i]))
     print(temp)
 
 
-def printRawFile():
+def print_raw_file():
     print("-----------------raw file-----------------------")
     with open(midi_file, 'rb') as file:
-        printHex(file.read())
+        print_hex(file.read())
     file.close()
     print()
     print()
 
 
-def testMidiParser():
-    midiParser = MidiParser(midi_file)
+def test_midi_parser():
+    midi_parser = MidiParser(midi_file)
     print("---------------Testing MidiParser--------------")
-    print("Header def and size: " + str(midiParser.readNextData()))
-    headerBody = midiParser.readNextData()
-    print("Body of header chunk: " + str(headerBody) + " number of tracks: " +
-          str(int.from_bytes(headerBody[2:4], "big")))
-    while midiParser.hasMoreData():
-        trackDef = midiParser.readNextData()
-        print("Track def and size: " + str(trackDef) + " track size: "
-              + str(int.from_bytes(trackDef[4:8], "big")))
-        while midiParser.bytesLeftInChunk > 0:
-            print(str(midiParser.readNextData()) + " size left: " +
-                  str(midiParser.bytesLeftInChunk))
+    print("Header def and size: " + str(midi_parser.read_next_data()))
+    header_body = midi_parser.read_next_data()
+    print("Body of header chunk: " + str(header_body) + " number of tracks: " +
+          str(int.from_bytes(header_body[2:4], "big")))
+    while midi_parser.has_more_data():
+        track_def = midi_parser.read_next_data()
+        print("Track def and size: " + str(track_def) + " track size: "
+              + str(int.from_bytes(track_def[4:8], "big")))
+        while midi_parser.bytes_left_in_chunk > 0:
+            print(str(midi_parser.read_next_data()) + " size left: " +
+                  str(midi_parser.bytes_left_in_chunk))
         print()
-    midiParser.close()
+    midi_parser.close()
 
 
-def testEventDecoder():
+def test_event_decoder():
     print("-----Testing MidiEventDecoder---------")
     # testing MidiEventDecoder
-    eventDecoder = MidiEventDecoder(midi_file)  # testMidiFile.mid
-    print(eventDecoder.headerData())
-    # eventData = eventDecoder.nextEvent().midiData
-    # print(int.from_bytes(eventData[0:1],"big"))
-    # print(Util.msbIsOne(eventData))
-    # print(type(eventData))
-    while eventDecoder.hasMoreEvents():
-        event = eventDecoder.nextEvent()
+    event_decoder = MidiEventDecoder(midi_file)  # testMidiFile.mid
+    print(event_decoder.header_data())
+    # event_data = event_decoder.next_event().midi_data
+    # print(int.from_bytes(event_data[0:1],"big"))
+    # print(Util.msb_is_one(event_data))
+    # print(type(event_data))
+    while event_decoder.has_more_events():
+        event = event_decoder.next_event()
         print(event)
-    eventDecoder.close()
+    event_decoder.close()
     print()
 
 
-def testMidiData():
+def test_midi_data():
     print("-----Testing MidiData---------")
-    midiData = MidiData(midi_file)
-    for i in range(midiData.getNumTracks()):
-        track = midiData.getTrack(i)
+    midi_data = MidiData(midi_file)
+    for i in range(midi_data.get_num_tracks()):
+        track = midi_data.get_track(i)
         print(track.name)
         for note in track.notes:
             print(note)
@@ -71,7 +71,7 @@ def testMidiData():
     # print("Note A4 12.50s to 13.00s Channel: 1 <-- expected last note (testingrunningstatus.mid)")
 
 
-# printRawFile()
-# testMidiParser()
-# testEventDecoder()
-testMidiData()
+# print_raw_file()
+# test_midi_parser()
+# test_event_decoder()
+test_midi_data()
