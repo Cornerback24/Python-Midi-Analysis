@@ -37,11 +37,12 @@ class TrackData:
             self.name = event.track_name
         elif (isinstance(event, NoteOnEvent) and
               not (event.is_note_off())):
-            if event.note_number in self.incomplete_notes and self.debug:
+            if event.note_number in self.incomplete_notes:
                 self.skipped_note_on_events[event.note_number] = self.note_from_note_on_event(event)
                 # note will be skipped unless there is a note off event at the same time
-                print("Note on event for note " + str(event.note_number)
-                      + " already playing, potentially skipping...")
+                if self.debug:
+                    print("Note on event for note " + str(event.note_number)
+                          + " already playing, potentially skipping...")
             else:
                 self.incomplete_notes[event.note_number] = self.note_from_note_on_event(event)
         elif (isinstance(event, NoteOffEvent) or
